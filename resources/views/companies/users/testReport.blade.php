@@ -106,7 +106,7 @@
 @section('pagejs')
 <script type="text/javascript">
    $("#generate_btn").on("click", function (event) {
-      
+      // alert("jkhjkh");
       var userId = $('input[name=user_id]').val();
       var trackerId = $('input[name=trackerId]').val();
       var startDate = $('input[name=startDate]').val();
@@ -116,7 +116,8 @@
          return false;
       }
    
-      $('#dataTable').DataTable({
+      ReportTable = $('#dataTable').DataTable({
+         retrieve: true,
          processing: true,
          serverSide: true,
          lengthMenu: [10,20,50,100],
@@ -129,9 +130,11 @@
             { data: 'mileage',name: 'mileage',	orderable: true, "visible":true },
             { data: 'action',name: 'action', orderable: false,  },
          ],
+         
          dom: 'Blfrptip',
+         
          buttons: [
-            'excel','pdf','csv','print'
+            'excel','pdf'
             // {
                // extend: 'colvis',text: "Show / Hide Columns"
             // }
@@ -150,6 +153,7 @@
    			"sZeroRecords": "No matching records found",
    			"sEmptyTable": "No data available in table",
          },
+        // ReportTable . destroy();
          initComplete: function () {
             this.api().columns().every(function () {
                var column = this;

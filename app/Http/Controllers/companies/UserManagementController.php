@@ -411,6 +411,7 @@ class UserManagementController extends Controller
             // Get Tracker List Data
             $userData = User::find($user_id);
             $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
+            // dd($trackerlistUrl);
             $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
             if (!empty($data['trackerlistData']['list'])) {
                 $data['trackerlistData'] = array_reverse($data['trackerlistData']['list']);
