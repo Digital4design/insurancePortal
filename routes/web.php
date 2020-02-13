@@ -277,6 +277,8 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::get('{id}/{userid}/reportShow', 'companies\UserManagementController@getTrackersReport');
 
         Route::get('get-tracker-data/{id}/{user_id}', 'companies\UserManagementController@getTrackerData');
+        Route::get('get-tracker-report-data/{id}/{user_id}/{startDate}/{endDate}', 'companies\UserManagementController@getTrackersReportData');
+
 
     });
     /*

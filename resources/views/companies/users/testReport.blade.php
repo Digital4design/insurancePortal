@@ -35,11 +35,11 @@
                         </div>
                      </div>
                   </div>
-                  <div class="form-group row col-md-12 ">
-                     <p><label><b>Late check</b></label>: more than<input type="text" id="late_low"   class="my-form-control"> mins but less than
-                        <input type="text" id="late_high"   class=" my-form-control"> mins after schedule.
+                  <!-- <div class="form-group row col-md-12 ">
+                     <p><label><b>Late check</b></label>: more than<input type="text" id="late_low" value="5"  class="my-form-control"> mins but less than
+                        <input type="text" id="late_high" value="10"  class=" my-form-control"> mins after schedule.
                      </p>
-                  </div>
+                  </div> -->
                   <div class="text-left">
                      <button id="generate_btn" type="button" class="btn waves-effect waves-light btn-info">Generate Report</button>
                   </div>
@@ -54,13 +54,9 @@
                               <th>Last Known GPS Location (Latitude, Longitude)</th>
                            </tr>
                         </thead>
-                        <!-
+                       
                         <tfoot>
-                           <tr>
-                              <th>Date</th>
-                              <th>Time</th>
-                              <th>Start</th>
-                           </tr>
+                           
                         </tfoot>
                         
                         <tbody>
@@ -114,8 +110,88 @@
 @stop
 @section('pagejs')
 <script type="text/javascript">
-   var userId = $('input[name=user_id]').val();
+
+
+   $("#generate_btn").on("click", function (event) {
+
+      var userId = $('input[name=user_id]').val();
+      var trackerId = $('input[name=trackerId]').val();
+      var startDate = $('input[name=startDate]').val();
+      var endDate = $('input[name=endDate]').val();
+      if (!startDate) {
+         swal("Alert !", "Please select date range");
+         return false;
+      }
+
+      $('#dataTable').DataTable({
+      processing: true,
+      serverSide: true,
+      lengthMenu: [10,20,50,100],
+      order:[[1,'desc']],
+      ajax:'{{ url("/company/user-management/get-tracker-report-data") }}'+'/'+trackerId+'/'+userId+'/'+startDate+'/'+endDate,
+      columns: [
+         { data:'userData',name: 'userData', orderable: true },
+         { data:'rating',name: 'rating', orderable: true },
+         { data: 'odometer',name: 'odometer',	orderable: true, "visible":true },
+         { data: 'mileage',name: 'mileage',	orderable: true, "visible":true },
+         { data: 'action',name: 'action', orderable: false,  },
+      ],
+      dom: 'Blfrptip',
+      buttons: [
+         'excel','pdf','csv','print'
+            // {
+               // extend: 'colvis',text: "Show / Hide Columns"
+            // }
+         ],
+   		oLanguage: {
+   			sProcessing: "<img height='80' width='80' src='{{ url('public/assets/admin/images/loading.gif') }}' alt='loader'/>",
+   			"oPaginate": {
+   				"sPrevious": "Previous",
+   				"sNext": "Next",
+   			},
+   			"sSearch": "Search",
+   			"sLengthMenu": "Show _MENU_ entries",
+   			"sInfo": "Showing _START_ to _END_ of _TOTAL_ enteris",
+   			"sInfoEmpty" : "Showing 0 to 0 of 0 entries",
+   			 "sInfoFiltered": "search filtered entries",
+   			"sZeroRecords": "No matching records found",
+   			"sEmptyTable": "No data available in table",
+   		},
+   		initComplete: function () {
+   			this.api().columns().every(function () {
+   				var column = this;
+   				var input = document.createElement("input");
+   				$(input).appendTo($(column.footer()).empty()).on('change', function () {
+   					column.search($(this).val(), false, false, true).draw();
+   				});
+   		});
+   	}
+   });
+   });
+   $('#report_date').daterangepicker({
+      //timePicker: true,
+      autoUpdateInput: false,
+      locale: {
+         cancelLabel: 'Clear'
+      },
+      /*
+      startDate : moment().startOf('hour'),
+      endDate  : moment().startOf('hour').add(24),
+      locale   : {
+         format: 'DD-M-Y'
+      }
+      */
+     }, function(start, end, label) {
+        $("#startDate").val(start.format('YYYY-MM-DD'));
+        $("#endDate").val(end.format('YYYY-MM-DD'));
+      });
+
+
+
+
+   /* var userId = $('input[name=user_id]').val();
    var trackerId = $('input[name=trackerId]').val();
+   
    $('#dataTable').DataTable({
       processing: true,
       serverSide: true,
@@ -159,61 +235,11 @@
    				});
    		});
    	}
-   });
-   $("#generate_btn").on("click", function (event) {
-      let filterDate = $("#report_date").val();
-      // alert(filterDate);
-      // return false;
-      if (!filterDate) {
-         swal("Alert !", "Please select date range" );
-         return false;
-      }
-   	//update low and high limits from user input
-   	LATE_CHECK.low = $("#late_low").val();
-   	LATE_CHECK.high = $("#late_high").val();
-   	// STEP 1 - use the report date that the user selected to retrieve all tracker history for that day //
-   	FILTERS = getDateFilters(filterDate);
-   	if(FILTERS === false){
-   		return false;
-      }
-      // let AjaxUrl = API_URL + trackerHistoryAction + FILTERS + HASH;
-      $.ajax({
-         url: SITE_URL +'/ajax-handler?actionType=get-report'+HASH + FILTERS + '&latehigh='+LATE_CHECK.high +'&latelow='+LATE_CHECK.low,
-         type: "GET",
-         beforeSend:function(){
-            $('.dataTables_processing').show();
-         },
-      }).done(function (result) {
-         $('.dataTables_processing').hide();
-         if(result.status === false ){
-            swal("Alert", result.msg, "error");
-         }else{
-            ReportTable.clear().draw();
-            // console.log(result.data);
-            ReportTable.rows.add(result.data).draw();
-         }
-      }).fail(function (jqXHR, textStatus, errorThrown) {
-         $('.dataTables_processing').hide();
-         // needs to implement if it fails
-         console.log(errorThrown);
-      });
-   });
-   $('#report_date').daterangepicker({
-      //timePicker: true,
-      autoUpdateInput: false,
-      locale: {
-         cancelLabel: 'Clear'
-      },
-      /*
-      startDate : moment().startOf('hour'),
-      endDate  : moment().startOf('hour').add(24),
-      locale   : {
-         format: 'DD-M-Y'
-      }
-      */
-     }, function(start, end, label) {
-        $("#startDate").val(start.format('YYYY-MM-DD'));
-        $("#endDate").val(end.format('YYYY-MM-DD'));
-      });
+   }); */
+
+
+
+   
+ 
 </script>
 @stop
