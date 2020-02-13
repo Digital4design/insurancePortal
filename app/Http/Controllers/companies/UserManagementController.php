@@ -453,16 +453,16 @@ class UserManagementController extends Controller
             $count = count($harshD);
             if ($count > 0) {
                 if ($count == 1) {
-                    $rating = '9/10';
+                    $rating = '9';
                 } else if ($count == 5) {
-                    $rating = '5/10';
+                    $rating = '5';
                 } else if ($count >= 10) {
-                    $rating = '0/10';
+                    $rating = '0';
                 } else {
-                    $rating = $count . '/10';
+                    $rating = $count ;
                 }
             } else {
-                $rating = $count . '/10';
+                $rating = $count ;
             }
 
             $data['permission'] = DB::table('company_request_permission')
