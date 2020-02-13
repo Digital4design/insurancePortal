@@ -182,7 +182,7 @@
       $('#report_date').on('apply.daterangepicker', function(ev, picker) {
          $(this).val(picker.startDate.format('DD-M-Y') + ' - ' + picker.endDate.format('DD-M-Y'));
          $("#startDate").val(picker.startDate.format('YYYY-MM-DD'));
-         $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));
+         $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));  
       });
    
    /*
