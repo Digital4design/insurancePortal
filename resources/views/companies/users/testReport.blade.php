@@ -11,9 +11,9 @@
    .dataTable tr td.time_taken_long {     color: #000; background-color: yellow; }
 </style>
 @stop
-<?php
+<?php 
 ?>
-<!--
+
 	<input type="hidden" name="user_id" value="{{$userId}}">
 	<input type="hidden" name="trackerId" value="{{$trackerId}}">
 <div class="">
@@ -36,15 +36,15 @@
                      </div>
                   </div>
                   <div class="form-group row col-md-12 ">
-                     <p><label><b>Late check</b></label>: more than<input type="text" id="late_low" value="5"  class="my-form-control"> mins but less than
-                        <input type="text" id="late_high" value="10"  class=" my-form-control"> mins after schedule.
+                     <p><label><b>Late check</b></label>: more than<input type="text" id="late_low"   class="my-form-control"> mins but less than
+                        <input type="text" id="late_high"   class=" my-form-control"> mins after schedule.
                      </p>
                   </div>
                   <div class="text-left">
                      <button id="generate_btn" type="button" class="btn waves-effect waves-light btn-info">Generate Report</button>
                   </div>
                   <div class="table-responsive m-t-40">
-                     <table id="report_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                     <table id="dataTable" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                            <tr>
                               <th>Policy Holder</th>
@@ -62,7 +62,7 @@
                               <th>Start</th>
                            </tr>
                         </tfoot>
-                        ->
+                        
                         <tbody>
                         </tbody>
                      </table>
@@ -75,9 +75,9 @@
          </div>
       </div>
    </div>
-</div>-->
+</div>
 
-<div class="row">
+<!-- <div class="row">
    <div class="col-12">
       <div class="card">
          <div class="card-body">
@@ -110,7 +110,7 @@
          </div>
       </div>
    </div>
-</div>
+</div> -->
 @stop
 @section('pagejs')
 <script type="text/javascript">
