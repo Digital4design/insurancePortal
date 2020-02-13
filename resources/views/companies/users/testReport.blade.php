@@ -12,10 +12,9 @@
 </style>
 @stop
 <?php 
-?>
-
-	<input type="hidden" name="user_id" value="{{$userId}}">
-	<input type="hidden" name="trackerId" value="{{$trackerId}}">
+   ?>
+<input type="hidden" name="user_id" value="{{$userId}}">
+<input type="hidden" name="trackerId" value="{{$trackerId}}">
 <div class="">
 <div class="row">
    <div class="col-12">
@@ -39,7 +38,7 @@
                      <p><label><b>Late check</b></label>: more than<input type="text" id="late_low" value="5"  class="my-form-control"> mins but less than
                         <input type="text" id="late_high" value="10"  class=" my-form-control"> mins after schedule.
                      </p>
-                  </div> -->
+                     </div> -->
                   <div class="text-left">
                      <button id="generate_btn" type="button" class="btn waves-effect waves-light btn-info">Generate Report</button>
                   </div>
@@ -54,11 +53,8 @@
                               <th>Last Known GPS Location (Latitude, Longitude)</th>
                            </tr>
                         </thead>
-                       
                         <tfoot>
-                           
                         </tfoot>
-                        
                         <tbody>
                         </tbody>
                      </table>
@@ -72,7 +68,6 @@
       </div>
    </div>
 </div>
-
 <!-- <div class="row">
    <div class="col-12">
       <div class="card">
@@ -106,14 +101,12 @@
          </div>
       </div>
    </div>
-</div> -->
+   </div> -->
 @stop
 @section('pagejs')
 <script type="text/javascript">
-
-
    $("#generate_btn").on("click", function (event) {
-
+      
       var userId = $('input[name=user_id]').val();
       var trackerId = $('input[name=trackerId]').val();
       var startDate = $('input[name=startDate]').val();
@@ -122,47 +115,47 @@
          swal("Alert !", "Please select date range");
          return false;
       }
-
+   
       $('#dataTable').DataTable({
-      processing: true,
-      serverSide: true,
-      lengthMenu: [10,20,50,100],
-      order:[[1,'desc']],
-      ajax:'{{ url("/company/user-management/get-tracker-report-data") }}'+'/'+trackerId+'/'+userId+'/'+startDate+'/'+endDate,
-      columns: [
-         { data:'userData',name: 'userData', orderable: true },
-         { data:'rating',name: 'rating', orderable: true },
-         { data: 'odometer',name: 'odometer',	orderable: true, "visible":true },
-         { data: 'mileage',name: 'mileage',	orderable: true, "visible":true },
-         { data: 'action',name: 'action', orderable: false,  },
-      ],
-      dom: 'Blfrptip',
-      buttons: [
-         'excel','pdf','csv','print'
+         processing: true,
+         serverSide: true,
+         lengthMenu: [10,20,50,100],
+         order:[[1,'desc']],
+         ajax:'{{ url("/company/user-management/get-tracker-report-data") }}'+'/'+trackerId+'/'+userId+'/'+startDate+'/'+endDate,
+         columns: [
+            { data:'userData',name: 'userData', orderable: true },
+            { data:'rating',name: 'rating', orderable: true },
+            { data: 'odometer',name: 'odometer',	orderable: true, "visible":true },
+            { data: 'mileage',name: 'mileage',	orderable: true, "visible":true },
+            { data: 'action',name: 'action', orderable: false,  },
+         ],
+         dom: 'Blfrptip',
+         buttons: [
+            'excel','pdf','csv','print'
             // {
                // extend: 'colvis',text: "Show / Hide Columns"
             // }
          ],
-   		oLanguage: {
-   			sProcessing: "<img height='80' width='80' src='{{ url('public/assets/admin/images/loading.gif') }}' alt='loader'/>",
-   			"oPaginate": {
-   				"sPrevious": "Previous",
-   				"sNext": "Next",
-   			},
-   			"sSearch": "Search",
+         oLanguage: {
+            sProcessing: "<img height='80' width='80' src='{{ url('public/assets/admin/images/loading.gif') }}' alt='loader'/>",
+            "oPaginate": {
+               "sPrevious": "Previous",
+               "sNext": "Next",
+            },
+            "sSearch": "Search",
    			"sLengthMenu": "Show _MENU_ entries",
    			"sInfo": "Showing _START_ to _END_ of _TOTAL_ enteris",
    			"sInfoEmpty" : "Showing 0 to 0 of 0 entries",
    			 "sInfoFiltered": "search filtered entries",
    			"sZeroRecords": "No matching records found",
    			"sEmptyTable": "No data available in table",
-   		},
-   		initComplete: function () {
-   			this.api().columns().every(function () {
-   				var column = this;
-   				var input = document.createElement("input");
-   				$(input).appendTo($(column.footer()).empty()).on('change', function () {
-   					column.search($(this).val(), false, false, true).draw();
+         },
+         initComplete: function () {
+            this.api().columns().every(function () {
+               var column = this;
+               var input = document.createElement("input");
+               $(input).appendTo($(column.footer()).empty()).on('change', function () {
+                  column.search($(this).val(), false, false, true).draw();
    				});
    		});
    	}
@@ -175,26 +168,29 @@
          cancelLabel: 'Clear'
       },
       /*
-      startDate : moment().startOf('hour'),
-      endDate  : moment().startOf('hour').add(24),
-      locale   : {
-         format: 'DD-M-Y'
-      }
+         startDate : moment().startOf('hour'),
+         endDate  : moment().startOf('hour').add(24),
+         locale   : {
+            format: 'DD-M-Y'
+         }
       */
      }, function(start, end, label) {
         $("#startDate").val(start.format('YYYY-MM-DD'));
         $("#endDate").val(end.format('YYYY-MM-DD'));
       });
-
-
-
-
-   /* var userId = $('input[name=user_id]').val();
-   var trackerId = $('input[name=trackerId]').val();
    
-   $('#dataTable').DataTable({
-      processing: true,
-      serverSide: true,
+      $('#report_date').on('apply.daterangepicker', function(ev, picker) {
+         $(this).val(picker.startDate.format('DD-M-Y') + ' - ' + picker.endDate.format('DD-M-Y'));
+         $("#startDate").val(picker.startDate.format('YYYY-MM-DD'));
+         $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));
+      });
+   
+   /*
+      var userId = $('input[name=user_id]').val();
+      var trackerId = $('input[name=trackerId]').val();
+      $('#dataTable').DataTable({
+         processing: true,
+         serverSide: true,
       lengthMenu: [10,20,50,100],
       order:[[1,'desc']],
       ajax:'{{ url("/company/user-management/get-tracker-data") }}'+'/'+trackerId+'/'+userId,
@@ -235,11 +231,12 @@
    				});
    		});
    	}
-   }); */
-
-
-
+   }); 
    
- 
+   */
+  
+   
+   
+   
 </script>
 @stop

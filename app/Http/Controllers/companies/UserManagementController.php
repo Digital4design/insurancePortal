@@ -385,7 +385,7 @@ class UserManagementController extends Controller
             'user_id' => $user_id])
             ->get()
             ->toArray();
-            //dd($accessData);
+        //dd($accessData);
         if ($accessData) {
             // dd($id);
             // try {
@@ -410,7 +410,7 @@ class UserManagementController extends Controller
 
             // Get Tracker List Data
             $userData = User::find($user_id);
-            $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from='.$currentData.'%2000:00:00&to='.$lastData.'%2023:59:59';
+            $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
             $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
             if (!empty($data['trackerlistData']['list'])) {
                 $data['trackerlistData'] = array_reverse($data['trackerlistData']['list']);
@@ -511,7 +511,7 @@ class UserManagementController extends Controller
         } else {
             $result = array();
         }
-// dd($result);
+        // dd($result);
         return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
             return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
         })->make(true);
@@ -520,12 +520,7 @@ class UserManagementController extends Controller
 
     public function getTrackerData($id, $user_id, Request $request, UserService $userService)
     {
-        $accessData = UserDetailsAccessModel::where([
-            'company_id' => Auth::user()->id,
-            'accept_status' => '1',
-            'user_id' => $user_id])
-            ->get()
-            ->toArray();
+        $accessData = UserDetailsAccessModel::where(['company_id' => Auth::user()->id,'accept_status' => '1','user_id' => $user_id])->get()->toArray();
         //dd($accessData);
         if ($accessData) {
             // dd($id);
@@ -538,7 +533,6 @@ class UserManagementController extends Controller
             $data['lastGpsPointData'] = $userService->callAPI($lastGpsPointUrl);
 
             $data['lastGpsPointData'] = $data['lastGpsPointData']['value'];
-            //dd($data['lastGpsPointData']);
             // Get State Data
 
             $getStateUrl = "tracker/get_state/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
