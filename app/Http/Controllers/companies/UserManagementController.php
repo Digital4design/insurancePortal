@@ -58,9 +58,8 @@ class UserManagementController extends Controller
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . ' data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
-                <a href ="' . url('company/user-management') . '/' . Crypt::encrypt($result->id) . '/view"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>
-                <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>testShow</a>
-                <a data-id =' . Crypt::encrypt($result->id) . ' class="btn btn-xs btn-danger delete1232" style="color:#fff"><i class="fa fa-trash" aria-hidden="true"></i> Views data</a>';
+                
+                <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
             })->make(true);
     }
     /**
