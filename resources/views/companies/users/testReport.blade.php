@@ -28,7 +28,7 @@
                      <div class="col-sm-4">
                         <div class="input-group">
                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                           <input id="report_date" type="text" class=" form-control">
+                           <input id="report_date" type="text" name="report_date" class=" form-control">
                            <input type="hidden" id="startDate" name="startDate" class="my-report-Dates" value="" />
                            <input type="hidden" id="endDate" name="endDate" class="my-report-Dates"  value="" />
                         </div>
@@ -105,19 +105,23 @@
 @stop
 @section('pagejs')
 <script type="text/javascript">
+   
+   ReportTable =$('#dataTable').DataTable();
    $("#generate_btn").on("click", function (event) {
       // alert("jkhjkh");
       var userId = $('input[name=user_id]').val();
       var trackerId = $('input[name=trackerId]').val();
       var startDate = $('input[name=startDate]').val();
       var endDate = $('input[name=endDate]').val();
-      if (!startDate) {
+      var dateRange = $('input[name=report_date]').val();
+      if (!dateRange) {
          swal("Alert !", "Please select date range");
          return false;
       }
-   
-      ReportTable = $('#dataTable').DataTable({
-         retrieve: true,
+      ReportTable.destroy();
+
+      ReportTable =$('#dataTable').DataTable({
+         //retrieve: true,
          processing: true,
          serverSide: true,
          lengthMenu: [10,20,50,100],
