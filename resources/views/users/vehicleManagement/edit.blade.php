@@ -2,10 +2,18 @@
 @section('pageTitle','Update Vehicle')
 @section('content')
 @section('pageCss')
-<style></style>
-<?php
-   // dd($fuelData);
-   ?>
+<style>
+spam.important {
+    color: red;
+}
+.form-group p.req {
+    width: auto;
+    display: inline-block;
+    margin: 0 0 0 7px;
+    font-size: 12px;
+}
+</style>
+
 @stop
 <div class="row">
    <div class="col-lg-12">
@@ -39,6 +47,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('label') has-danger @enderror ">
                            <label class="control-label">Label</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <input
                               type="text"
                               class="form-control @error('label') form-control-danger @enderror"
@@ -55,6 +65,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('max_speed') has-danger @enderror">
                            <label class="control-label">Max Speed</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <input
                               type="text"
                               class="form-control @error('max_speed') form-control-danger @enderror"
@@ -71,6 +83,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('model') has-danger @enderror ">
                            <label class="control-label">model</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <input
                               type="text"
                               class="form-control @error('model') form-control-danger @enderror"
@@ -87,6 +101,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('type') has-danger @enderror">
                            <label class="control-label">Type</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <select class="form-control @error('type') form-control-danger @enderror" id="type" placeholder="type" name="type">
                               <option value="nullTracker">Select Vehicle Type</option>
                               @foreach($vehicleData as $list)
@@ -210,6 +226,8 @@
                      <div class="col-md-6">
                         <div class="form-group @error('passengers') has-danger @enderror">
                            <label>Passengers</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <input
                               type="text"
                               class="form-control @error('passengers') form-control-danger @enderror"
@@ -226,6 +244,8 @@
                      <div class="col-md-6">
                         <div class="form-group @error('fuel_type') has-danger @enderror">
                            <label>Fuels Type</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <select class="form-control @error('fuel_type') form-control-danger @enderror" id="fuel_type" placeholder="fuel_type" name="fuel_type">
                               <option value="nullTracker">Select fuel</option>
                               @foreach($fuelData as $list)
@@ -256,6 +276,8 @@
                      <div class="col-md-6">
                         <div class="form-group @error('fuel_tank_volume') has-danger @enderror">
                            <label>Fuel Tank Volume</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <input
                               type="text"
                               class="form-control @error('fuel_tank_volume') form-control-danger @enderror"
@@ -263,7 +285,7 @@
                               name="fuel_tank_volume"
                               placeholder="fuel_tank_volume"
                               value="{{ old('fuel_tank_volume',(isset($userData['value']) && !empty($userData['value']['fuel_tank_volume'])) ? $userData['value']['fuel_tank_volume'] : '' ) }}"
-                              />
+                           />
                            @error('fuel_tank_volume')
                            <small class="form-control-feedback">{{ $errors->first('fuel_tank_volume') }}</small>
                            @enderror
@@ -272,13 +294,15 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('liability_insurance_policy_number') has-danger @enderror">
                            <label class="control-label">Liability Insurance Policy Number</label>
-                           <input 
-                              type="text" 
-                              class="form-control @error('liability_insurance_policy_number') form-control-danger @enderror " 
-                              id="liability_insurance_policy_number" 
-                              name="liability_insurance_policy_number" 
-                              placeholder="Liability Insurance Policy Number" 
-                              value="{{ old('liability_insurance_policy_number',(isset($userData['value']) && !empty($userData['value']['liability_insurance_policy_number'])) ? $userData['value']['liability_insurance_policy_number'] : '' ) }}" 
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
+                           <input
+                              type="text"
+                              class="form-control @error('liability_insurance_policy_number') form-control-danger @enderror "
+                              id="liability_insurance_policy_number"
+                              name="liability_insurance_policy_number"
+                              placeholder="Liability Insurance Policy Number"
+                              value="{{ old('liability_insurance_policy_number',(isset($userData['value']) && !empty($userData['value']['liability_insurance_policy_number'])) ? $userData['value']['liability_insurance_policy_number'] : '' ) }}"
                               />
                            @error('liability_insurance_policy_number')
                            <small class="form-control-feedback">{{ $errors->first('liability_insurance_policy_number') }}</small>
@@ -288,13 +312,15 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('liability_insurance_valid_till') has-danger @enderror">
                            <label class="control-label">Liability Insurance Valid Till</label>
-                           <input 
-                              type="date" 
-                              class="form-control @error('liability_insurance_valid_till') form-control-danger @enderror" 
-                              id="liability_insurance_valid_till" 
-                              name="liability_insurance_valid_till" 
-                              placeholder="liability_insurance_valid_till" 
-                              value="{{ old('liability_insurance_valid_till',(isset($userData['value']) && !empty($userData['value']['liability_insurance_valid_till'])) ? $userData['value']['liability_insurance_valid_till'] : '' ) }}" 
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
+                           <input
+                              type="date"
+                              class="form-control @error('liability_insurance_valid_till') form-control-danger @enderror"
+                              id="liability_insurance_valid_till"
+                              name="liability_insurance_valid_till"
+                              placeholder="liability_insurance_valid_till"
+                              value="{{ old('liability_insurance_valid_till',(isset($userData['value']) && !empty($userData['value']['liability_insurance_valid_till'])) ? $userData['value']['liability_insurance_valid_till'] : '' ) }}"
                               />
                            @error('liability_insurance_valid_till')
                            <small class="form-control-feedback">{{ $errors->first('liability_insurance_valid_till') }}</small>

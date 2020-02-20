@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,7 +10,6 @@
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/assets/admin/images/icon.png') }}">
     <title>Admin - @yield('pageTitle')</title>
-    <!-- Bootstrap Core CSS -->
     <link href="{{ asset('public/assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- morris CSS -->
     <link href="{{ asset('public/assets/admin/plugins/morrisjs/morris.css') }}" rel="stylesheet">
@@ -19,27 +17,21 @@
     <link href="{{ asset('public/assets/admin/css/style.css') }}" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="{{ asset('public/assets/admin/css/colors/blue.css') }}" id="theme" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-
+    
     <!-- Data tables -->
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <!--link rel="stylesheet" type="text/css" href="{{ url('public/assets/admin/plugins/data-tables/css/data-table.min.css') }}"-->
     <link rel="stylesheet" type="text/css" href="{{ url('public/assets/admin/plugins/datatables/extra-plugins/css/data-table-button.css') }}">
-		
+
     <!-- Sweet alert -->
     <link rel="stylesheet" href="{{ url('public/assets/admin/plugins/sweetalert/sweetalert2.min.css') }}" />
     <!-- Switcher Css -->
     <link href="{{ url('public/assets/admin/plugins/switchery/dist/switchery.min.css') }}" rel="stylesheet" />
     <!-- summernotes CSS -->
     <link href="{{ url('public/assets/admin/plugins/summernote/dist/summernote.css') }}" rel="stylesheet" />
-	
-	<link rel="stylesheet" type="text/css" href="{{ url('public/assets/admin/plugins/datatables/extra-plugins/css/rowGroup.dataTables.min.css') }}">
-	<!-- End here --->
 
     <!-- include Page CSS -->
     @yield('pageCss')
@@ -154,7 +146,7 @@
     <!-- End Wrapper -->
     <!-- ============================================================== -->
     <!-- ============================================================== -->
-    <!-- All Jquery -->
+   <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="{{ asset('public/assets/admin/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap tether Core JavaScript -->
@@ -162,9 +154,7 @@
     <script src="{{ asset('public/assets/admin/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- slimscrollbar scrollbar JavaScript -->
     <script src="{{ asset('public/assets/admin/js/jquery.slimscroll.js') }}"></script>
-    <!--Wave Effects -->
-    <!--script src="js/waves.js"></script--->
-    <!--Menu sidebar -->
+  
     <script src="{{ asset('public/assets/admin/js/sidebarmenu.js') }}"></script>
     <!--stickey kit -->
     <script src="{{ asset('public/assets/admin/plugins/sticky-kit-master/dist/sticky-kit.min.js') }}"></script>
@@ -177,9 +167,7 @@
     <script type="text/javascript" src="{{ asset('public/assets/admin/plugins/datatables/extra-plugins/dataTables.buttons.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('public/assets/admin/plugins/datatables/extra-plugins/buttons.html5.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('public/assets/admin/plugins/datatables/extra-plugins/buttons.colVis.min.js') }}"></script>
-	
-	<!---Data table Group By Row JS and CSS -->
-		<script type="text/javascript" src="{{ asset('public/assets/admin/plugins/datatables/extra-plugins/dataTables.rowGroup.min.js') }}"></script>
+
 
     <!--script src="{{ asset('public/assets/admin/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script-->
@@ -195,9 +183,22 @@
 
     <!-- summernotes JS -->
     <script src="{{ asset('public/assets/admin/plugins/summernote/dist/summernote.min.js') }}"></script>
+        <!-- Range Date picker -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+  
 
+    
 
+    
     <!-- ============================================================== -->
     <!-- This page plugins -->
     <!-- ============================================================== -->
@@ -209,18 +210,14 @@
     <!-- Chart JS -->
     <!--script src="js/dashboard1.js"></script-->
     <!-- ============================================================== -->
-
-
     <!-- Include page js script here -->
     @yield('pagejs')
-
     <script>
         var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
         $('.js-switch').each(function() {
             new Switchery($(this)[0], $(this).data());
         });
     </script>
-
 </body>
 
 </html>

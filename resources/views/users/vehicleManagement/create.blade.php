@@ -2,12 +2,18 @@
 @section('pageTitle','Create New Vehicle')
 @section('content')
 @section('pageCss')
-<style></style>
-<?php 
-   // foreach($trackerData['list'] as $list){
-   // 	dd($list['label']);
-   // }
-   ?>
+<style>
+spam.important {
+    color: red;
+}
+.form-group p.req {
+    width: auto;
+    display: inline-block;
+    margin: 0 0 0 7px;
+    font-size: 12px;
+}
+</style>
+
 @stop
 <div class="row">
    <div class="col-lg-12">
@@ -30,7 +36,7 @@
 					 <div class="col-md-6">
                         <div class="form-group @error('tracker_id') has-danger @enderror">
                            <label>Assets</label>
-                           <select class="form-control @error('tracker_id') form-control-danger @enderror" id="tracker_id" placeholder="tracker_id" name="tracker_id">
+                           <select id="tracker_id" class="form-control @error('tracker_id') form-control-danger @enderror"  placeholder="tracker_id" name="tracker_id">
                               <option value="nullTracker">Select Assets</option>
                               @foreach($trackerData['list'] as $list)
                               <option value="{{$list['id']}}">{{$list['label']}}</option>
@@ -42,6 +48,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('label') has-danger @enderror ">
                            <label class="control-label">Label</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('label') form-control-danger @enderror " 
@@ -58,6 +66,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('max_speed') has-danger @enderror ">
                            <label class="control-label">Max Speed</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('max_speed') form-control-danger @enderror " 
@@ -74,6 +84,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('model') has-danger @enderror ">
                            <label class="control-label">Model</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('model') form-control-danger @enderror " 
@@ -88,14 +100,19 @@
                      </div>
 
                      <div class="col-md-6">
-                        <div class="form-group  @error('type') has-danger @enderror ">
-                           <label class="control-label">Type</label>
-                           <select class="form-control @error('type') form-control-danger @enderror" id="type" placeholder="type" name="type">
-                              <option value="nullTracker">Select Vehicle Type</option>
+                        <div class="form-group  @error('type') has-danger @enderror">
+                           <label class="control-label">Type</label> 
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
+                           <select class="form-control @error('type') form-control-danger @enderror" id="type" name="type">
+                              <option value="">Select Vehicle Type</option>
                               @foreach($vehicleData as $list)
                               <option value="{{$list['vehicles_type']}}">{{$list['vehicles_type']}}</option>
                               @endforeach
                            </select>
+                           @error('type')
+                              <small class="form-control-feedback">{{ $errors->first('type') }}</small>
+                           @enderror
                         </div>
                      </div>
 
@@ -137,6 +154,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('manufacture_year') has-danger @enderror ">
                            <label class="control-label">Manufacture Year</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('manufacture_year') form-control-danger @enderror " 
@@ -188,6 +207,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('reg_number') has-danger @enderror ">
                            <label class="control-label">Reg Number</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('reg_number') form-control-danger @enderror " 
@@ -222,6 +243,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('passengers') has-danger @enderror ">
                            <label class="control-label">Passengers</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('passengers') form-control-danger @enderror " 
@@ -235,16 +258,21 @@
                            @enderror
                         </div>
                      </div>
-
+                     
                      <div class="col-md-6">
                         <div class="form-group  @error('fuel_type') has-danger @enderror ">
                            <label class="control-label">Fuel Type</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <select class="form-control @error('fuel_type') form-control-danger @enderror" id="fuel_type" placeholder="fuel_type" name="fuel_type">
-                              <option value="nullTracker">Select Fuel Type</option>
+                              <option value="">Select Fuel Type</option>
                               @foreach($fuelData as $list)
                               <option value="{{$list['fuels_type']}}">{{$list['fuels_type']}}</option>
                               @endforeach
                            </select>
+                           @error('fuel_type')
+                              <small class="form-control-feedback">{{ $errors->first('fuel_type') }}</small>
+                           @enderror
                         </div>
                      </div>
 
@@ -268,6 +296,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('Fuel_tank_volume') has-danger @enderror ">
                            <label class="control-label">Fuel Tank Volume</label>
+                           <spam class="important"> *</spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('fuel_tank_volume') form-control-danger @enderror " 
@@ -285,6 +315,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('liability_insurance_policy_number') has-danger @enderror ">
                            <label class="control-label">Liability Insurance Policy Number</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="text" 
                               class="form-control @error('liability_insurance_policy_number') form-control-danger @enderror " 
@@ -302,6 +334,8 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('liability_insurance_valid_till') has-danger @enderror ">
                            <label class="control-label">Liability Insurance Valid Till</label>
+                           <spam class="important"> * </spam>
+                           <p class="req">This is required field</p>
                            <input 
                               type="date" 
                               class="form-control @error('liability_insurance_valid_till') form-control-danger @enderror " 
@@ -315,12 +349,6 @@
                            @enderror
                         </div>
                      </div>
-
-
-
-
-
-
                   </div>
                </div>
                <div class="form-actions">

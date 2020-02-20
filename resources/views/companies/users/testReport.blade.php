@@ -34,11 +34,7 @@
                         </div>
                      </div>
                   </div>
-                  <!-- <div class="form-group row col-md-12 ">
-                     <p><label><b>Late check</b></label>: more than<input type="text" id="late_low" value="5"  class="my-form-control"> mins but less than
-                        <input type="text" id="late_high" value="10"  class=" my-form-control"> mins after schedule.
-                     </p>
-                     </div> -->
+                 
                   <div class="text-left">
                      <button id="generate_btn" type="button" class="btn waves-effect waves-light btn-info">Generate Report</button>
                   </div>
@@ -68,40 +64,7 @@
       </div>
    </div>
 </div>
-<!-- <div class="row">
-   <div class="col-12">
-      <div class="card">
-         <div class="card-body">
-            <h4 class="card-title">All Report Listing</h4>
-            <h6 class="card-subtitle">Here you can manage Report</h6>
-            <input type="hidden" name="user_id" value="{{$userId}}">
-            <input type="hidden" name="trackerId" value="{{$trackerId}}">
-            <div class="table-responsive m-t-40">
-               @if(Session::has('status'))
-               <div class="alert alert-{{ Session::get('status') }}">
-                  <i class="ti-user"></i> {{ Session::get('message') }}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
-               </div>
-               @endif
-               <table id="dataTable" class=" table table-striped table-bordered dataTable">
-                  <thead>
-                     <tr>
-                        <th>Policy Holder</th>
-                        <th>Rating(1-10)</th>
-                        <th>Odometer Reading (Km)</th>
-                        <th>Total Mileage (Km)</th>
-                        <th>Last Known GPS Location (Latitude, Longitude)</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                  
-                  </tbody>
-               </table>
-            </div>
-         </div>
-      </div>
-   </div>
-   </div> -->
+
 @stop
 @section('pagejs')
 <script type="text/javascript">

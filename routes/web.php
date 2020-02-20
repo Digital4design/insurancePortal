@@ -18,6 +18,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth']], function 
     Route::get('/', 'Admin\DashboardController@index');
     Route::get('/profile', 'Admin\DashboardController@myAccount');
     Route::post('/profile-edit', 'Admin\DashboardController@userProfileUpdate')->name('profile-edit');
+    Route::get('/getUsesData/{startDate}/{endDate}', 'Admin\DashboardController@getUsesData');
     /*
     |-----------------------------------
     | Role Management routes here       |

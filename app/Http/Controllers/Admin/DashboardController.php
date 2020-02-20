@@ -7,6 +7,8 @@ use App\User;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
+use Yajra\Datatables\Datatables;
+
 
 class DashboardController extends Controller
 {
@@ -41,6 +43,10 @@ class DashboardController extends Controller
                 'user_data' => $user_data,
             )
         );
+    }
+    public function getUsesData($startData, $endDate, Request $request)
+    {
+        dd($startData);
     }
     /**
      * Show the Admin editAccount.

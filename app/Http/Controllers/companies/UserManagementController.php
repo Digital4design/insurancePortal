@@ -459,10 +459,10 @@ class UserManagementController extends Controller
                 } else if ($count >= 10) {
                     $rating = '0';
                 } else {
-                    $rating = $count ;
+                    $rating = $count;
                 }
             } else {
-                $rating = $count ;
+                $rating = $count;
             }
 
             $data['permission'] = DB::table('company_request_permission')
@@ -521,7 +521,7 @@ class UserManagementController extends Controller
 
     public function getTrackerData($id, $user_id, Request $request, UserService $userService)
     {
-        $accessData = UserDetailsAccessModel::where(['company_id' => Auth::user()->id,'accept_status' => '1','user_id' => $user_id])->get()->toArray();
+        $accessData = UserDetailsAccessModel::where(['company_id' => Auth::user()->id, 'accept_status' => '1', 'user_id' => $user_id])->get()->toArray();
         //dd($accessData);
         if ($accessData) {
             // dd($id);

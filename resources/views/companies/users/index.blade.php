@@ -7,16 +7,10 @@
 	<div class="col-12">
 		<div class="card">
 			<div class="card-body">
-                <!-- <div class="right-side-struct pull-right" >
-				    <a href="{{ url('/company/user-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"  ><i class="fa fa-plus" aria-hidden="true"></i> Add New User </a>
-				</div> -->
-
-                <h4 class="card-title">All User Listing</h4>
-				<h6 class="card-subtitle">Here you can manage Users</h6>
-
-				<div class="table-responsive m-t-40">
-
-					@if(Session::has('status'))
+                <h4 class="card-title">All Assets Listing</h4>
+				<h6 class="card-subtitle">Here you can manage Assets</h6>
+                <div class="table-responsive m-t-40">
+                    @if(Session::has('status'))
 						<div class="alert alert-{{ Session::get('status') }}">
 							<i class="ti-user"></i> {{ Session::get('message') }}
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
@@ -25,7 +19,7 @@
                 	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
-                                <th>First Name</th>
+                                <!-- <th>First Name</th> -->
                                 <th>License Plate Number</th>
                                 <!--<th>Name</th>
                                 <th>Email</th>
@@ -96,7 +90,7 @@ $(function() {
         ajax: '{!! url("/company/user-management/user-data") !!}',
         columns: [
 
-			{ data: 'firstName',		name: 'firstName', orderable: true },
+			//{ data: 'firstName',		name: 'firstName', orderable: true },
             { data: 'driver_license_id',		name: 'driver_license_id', orderable: true },
             // { data: 'name',		name: 'name', orderable: true },
 			// { data: 'email',	name: 'email', orderable: true },
