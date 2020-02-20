@@ -12,7 +12,7 @@ use Auth;
 use Crypt;
 use DB;
 use Illuminate\Http\Request;
-use Redirect;
+use Redirect; 
 use Yajra\Datatables\Datatables;
 
 class AccessRequestController extends Controller

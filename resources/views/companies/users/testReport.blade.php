@@ -28,17 +28,13 @@
                      <div class="col-sm-4">
                         <div class="input-group">
                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                           <input id="report_date" type="text" class=" form-control">
+                           <input id="report_date" type="text" name="report_date" class=" form-control">
                            <input type="hidden" id="startDate" name="startDate" class="my-report-Dates" value="" />
                            <input type="hidden" id="endDate" name="endDate" class="my-report-Dates"  value="" />
                         </div>
                      </div>
                   </div>
-                  <!-- <div class="form-group row col-md-12 ">
-                     <p><label><b>Late check</b></label>: more than<input type="text" id="late_low" value="5"  class="my-form-control"> mins but less than
-                        <input type="text" id="late_high" value="10"  class=" my-form-control"> mins after schedule.
-                     </p>
-                     </div> -->
+                 
                   <div class="text-left">
                      <button id="generate_btn" type="button" class="btn waves-effect waves-light btn-info">Generate Report</button>
                   </div>
@@ -68,55 +64,27 @@
       </div>
    </div>
 </div>
-<!-- <div class="row">
-   <div class="col-12">
-      <div class="card">
-         <div class="card-body">
-            <h4 class="card-title">All Report Listing</h4>
-            <h6 class="card-subtitle">Here you can manage Report</h6>
-            <input type="hidden" name="user_id" value="{{$userId}}">
-            <input type="hidden" name="trackerId" value="{{$trackerId}}">
-            <div class="table-responsive m-t-40">
-               @if(Session::has('status'))
-               <div class="alert alert-{{ Session::get('status') }}">
-                  <i class="ti-user"></i> {{ Session::get('message') }}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
-               </div>
-               @endif
-               <table id="dataTable" class=" table table-striped table-bordered dataTable">
-                  <thead>
-                     <tr>
-                        <th>Policy Holder</th>
-                        <th>Rating(1-10)</th>
-                        <th>Odometer Reading (Km)</th>
-                        <th>Total Mileage (Km)</th>
-                        <th>Last Known GPS Location (Latitude, Longitude)</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                  
-                  </tbody>
-               </table>
-            </div>
-         </div>
-      </div>
-   </div>
-   </div> -->
+
 @stop
 @section('pagejs')
 <script type="text/javascript">
+   
+   ReportTable =$('#dataTable').DataTable();
    $("#generate_btn").on("click", function (event) {
-      
+      // alert("jkhjkh");
       var userId = $('input[name=user_id]').val();
       var trackerId = $('input[name=trackerId]').val();
       var startDate = $('input[name=startDate]').val();
       var endDate = $('input[name=endDate]').val();
-      if (!startDate) {
+      var dateRange = $('input[name=report_date]').val();
+      if (!dateRange) {
          swal("Alert !", "Please select date range");
          return false;
       }
-   
-      $('#dataTable').DataTable({
+      ReportTable.destroy();
+
+      ReportTable =$('#dataTable').DataTable({
+         //retrieve: true,
          processing: true,
          serverSide: true,
          lengthMenu: [10,20,50,100],
@@ -129,9 +97,11 @@
             { data: 'mileage',name: 'mileage',	orderable: true, "visible":true },
             { data: 'action',name: 'action', orderable: false,  },
          ],
+         
          dom: 'Blfrptip',
+         
          buttons: [
-            'excel','pdf','csv','print'
+            'excel','pdf'
             // {
                // extend: 'colvis',text: "Show / Hide Columns"
             // }
@@ -150,6 +120,7 @@
    			"sZeroRecords": "No matching records found",
    			"sEmptyTable": "No data available in table",
          },
+        // ReportTable . destroy();
          initComplete: function () {
             this.api().columns().every(function () {
                var column = this;
