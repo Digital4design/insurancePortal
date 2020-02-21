@@ -1,8 +1,7 @@
 APP_NAME='Insurance Portal'
 APP_ENV=local
-APP_KEY=base64:jKOEt603xaDc4HL7s/MwBIne7yc1yFn6vjrbQca1w/s=
+APP_KEY=base64:
 APP_DEBUG=true
-API_URL=https://api.ontracsystems.com/
 APP_URL=http://localhost/insurancePortal/
 
 LOG_CHANNEL=stack
