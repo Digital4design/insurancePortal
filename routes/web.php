@@ -288,9 +288,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::get('create', 'companies\SpeedingController@create');
         Route::post('/save-user', 'companies\SpeedingController@store');
         Route::get('{id}/edit', 'companies\SpeedingController@edit');
-        
         Route::get('{id}/view', 'companies\SpeedingController@show');
-
         Route::post('{id}/update', 'companies\SpeedingController@update');
         Route::get('delete/{id}', 'companies\SpeedingController@destroy');
     });

@@ -22,10 +22,6 @@
                                 <th>Value</th>
                                 <th>Cost (Value)</th>
                                 <th>speedType</th>
-                                <!--<th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Account Status</th>
-                                <th>Created Date</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>

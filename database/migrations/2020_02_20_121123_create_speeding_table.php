@@ -15,6 +15,8 @@ class CreateSpeedingTable extends Migration
     {
         Schema::create('speeding', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->biginteger('company_id')->unsigned()->nullable();
+            $table->foreign('company_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('speedingValue')->nullable();
             $table->string('costValue')->nullable();
             $table->enum('speedType', ['speed', 'harsh'])->default('speed')->comment = 'speed / harsh';

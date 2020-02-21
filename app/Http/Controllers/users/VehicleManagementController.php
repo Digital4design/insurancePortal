@@ -35,7 +35,6 @@ class VehicleManagementController extends Controller
         $result = $userService->callAPI($requestedUrl);
         return $result = json_encode($result);
     }
-
     /**
      * Show the form for creating a new resource.
      * @return \Illuminate\Http\Response
