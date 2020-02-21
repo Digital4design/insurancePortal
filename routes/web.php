@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -280,8 +280,21 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::get('get-tracker-data/{id}/{user_id}', 'companies\UserManagementController@getTrackerData');
         Route::get('get-tracker-report-data/{id}/{user_id}/{startDate}/{endDate}', 'companies\UserManagementController@getTrackersReportData');
 
-
     });
+
+    Route::group(['prefix' => 'speed-management'], function () {
+        Route::get('/', 'companies\SpeedingController@index');
+        Route::get('speed-data', 'companies\SpeedingController@getSpeedData');
+        Route::get('create', 'companies\SpeedingController@create');
+        Route::post('/save-user', 'companies\SpeedingController@store');
+        Route::get('{id}/edit', 'companies\SpeedingController@edit');
+        
+        Route::get('{id}/view', 'companies\SpeedingController@show');
+
+        Route::post('{id}/update', 'companies\SpeedingController@update');
+        Route::get('delete/{id}', 'companies\SpeedingController@destroy');
+    });
+
     /*
     |-------------------------------------
     | Company Management Routes Here |
