@@ -21,52 +21,15 @@
 						<!-- <li><a href="{{ url('company/user-management') }}"> <i class="mdi mdi-account-plus"></i>Create</a></li> -->
 					</ul>
 				</li>
-				<!-- <li>
+
+				<li>
 					<a class="has-arrow waves-effect waves-dark" href="javascript:void(0);" aria-expanded="false">
-						<i class="fa fa-building-o" aria-hidden="true"></i><span class="hide-menu">Insurance Company</span>
+						<i class="mdi mdi-bullseye" aria-hidden="true"></i><span class="hide-menu">Policy Parameters</span>
 					</a>
 					<ul aria-expanded="false" class="collapse">
-						<li><a href="{{ url('company/insurance-company-management') }}"> <i class="mdi mdi-view-list"></i>Listing</a></li>
-						<li><a href="{{ url('company/insurance-company-management/create') }}"> <i class="fa fa-plus" aria-hidden="true"></i> Create</a></li>
-					</ul>
-				</li> -->
-				<!-- <li>
-					<a class="has-arrow waves-effect waves-dark" href="javascript:void(0);" aria-expanded="false">
-						<i class="fa fa-file-text-o" aria-hidden="true"></i><span class="hide-menu">Pages</span>
-					</a>
-					<ul aria-expanded="false" class="collapse">
-						<li><a href="javascript:void(0);"> <i class="mdi mdi-view-list"></i> Listing</a></li>
-						<li><a href="javascript:void(0);"> <i class="mdi mdi-account-plus"></i> Create</a></li>
-					</ul>
-				</li> -->
-				<!-- <li>
-					<a class="has-arrow waves-effect waves-dark" href="javascript:void(0);" aria-expanded="false">
-						<i class="fa fa-money" aria-hidden="true"></i><span class="hide-menu">Donations </span>
-					</a>
-					<ul aria-expanded="false" class="collapse">
-						<li>
-							<a href="javascript:void(0);"><i class="mdi mdi-view-list"></i> Comming Soon</a>
-						</li>
-					</ul>
-				</li> -->
-				<!--li>
-					<a class="has-arrow waves-effect waves-dark" href="javascript:void(0);" aria-expanded="false">
-						<i class="fa fa-file-text-o" aria-hidden="true"></i><span class="hide-menu">Stripe </span>
-					</a>
-					<ul aria-expanded="false" class="collapse">
-						<li><a href="{{ url('admin/stripe/create-stripe') }}"> <i class="mdi mdi-view-list"></i> Listing</a></li>
-						<li><a href="{{ url('admin/stripe/create-stripe-account') }}" target="_blank"> <i class="fa fa-plus" aria-hidden="true"></i> Create</a></li>
-					</ul>
-				</li-->
-				<!--li> 
-						<a class="has-arrow waves-effect waves-dark" href="javascript:void(0);" aria-expanded="false">
-							<i class="fa fa-envelope" aria-hidden="true"></i><span class="hide-menu">Email Templates </span> 
-						</a>
-						<ul aria-expanded="false" class="collapse">
-							<li><a href="{{ url('admin/email-management') }}"> <i class="mdi mdi-view-list"></i> Listing</a></li>
-							<li><a href="{{ url('admin/email-management/create') }}"> <i class="fa fa-plus" aria-hidden="true"></i>  Create</a></li>
+						<li><a href="{{ url('company/speed-management') }}"> <i class="mdi mdi-view-list"></i>Listing</a></li>
 						</ul>
-					</li-->
+				</li>
 				<li class="nav-devider"></li>
 			</ul>
 		</nav>
