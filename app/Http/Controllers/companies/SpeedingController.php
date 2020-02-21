@@ -5,11 +5,11 @@ namespace App\Http\Controllers\companies;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\SpeedModel;
+use Auth;
 use Crypt;
 use Illuminate\Http\Request;
-use Yajra\Datatables\Datatables;
 use Validator;
-
+use Yajra\Datatables\Datatables;
 
 class SpeedingController extends Controller
 {
@@ -27,10 +27,7 @@ class SpeedingController extends Controller
 
     public function getSpeedData()
     {
-
-        $result = SpeedModel::get();
-        //dd($result);
-
+        $result = SpeedModel::where('company_id', Auth::user()->id)->get();
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<a href ="' . url('company/speed-management') . '/' . Crypt::encrypt($result->id) . '/edit"  class="btn btn-xs btn-warning edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
@@ -46,7 +43,9 @@ class SpeedingController extends Controller
      */
     public function create()
     {
-        //
+        $data['roles'] = Role::get();
+        return view('companies.speedingManage.create', $data);
+
     }
 
     /**
@@ -57,7 +56,29 @@ class SpeedingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'speedingValue' => 'required',
+            'costValue' => 'required',
+            'speedType' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+        try {
+            $speedData = SpeedModel::create([
+                'company_id' => Auth::user()->id,
+                'speedingValue' => $request->speedingValue,
+                'costValue' => $request->costValue,
+                'speedType' => $request->speedType,
+            ]);
+
+            return redirect('/company/speed-management')->with(['status' => 'success', 'message' => 'New ' . $request->speedType . ' Successfully created!']);
+        } catch (\Exception $e) {
+            return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
+            return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
+        }
+
     }
 
     /**
