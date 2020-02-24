@@ -1,6 +1,8 @@
 @extends('companies.master')
 @section('pageTitle','User Management')
+
 @section('content')
+
 <div class="row">
 	<div class="col-12">
 		<div class="card">

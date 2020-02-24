@@ -196,6 +196,9 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
     Route::group(['prefix' => 'access-request-management'], function () {
         Route::get('/', 'users\AccessRequestController@index');
         Route::get('request-data', 'users\AccessRequestController@requestData');
+
+        Route::get('{id}/grantAccess', 'users\AccessRequestController@grantAccessToCompany');
+
         Route::get('{id}/accept', 'users\AccessRequestController@requestAccept');
         Route::get('{id}/reject', 'users\AccessRequestController@requestReject');
         Route::get('{id}/withdraw', 'users\AccessRequestController@requestWithdraw');
