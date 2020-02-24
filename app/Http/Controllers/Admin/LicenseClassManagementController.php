@@ -29,6 +29,7 @@ class LicenseClassManagementController extends Controller
             ->select('driver_license_class.id', 'driver_license_class.country_id', 'driver_license_class.description', 'driver_license_class.license_class', 'countries.name')
             ->join('countries', 'countries.id', '=', 'driver_license_class.country_id')
             ->get();
+        // dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<a href ="' . url('admin/license-class-management') . '/' . Crypt::encrypt($result->id) . '/edit"  class="btn btn-xs btn-primary edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
