@@ -13,6 +13,6 @@ class SpeedModel extends Model
      * @var array
      */
     protected $fillable = [
-        'speedingValue', 'costValue', 'speedType',
+        'company_id', 'speedingValue', 'costValue', 'speedType',
     ];
 }

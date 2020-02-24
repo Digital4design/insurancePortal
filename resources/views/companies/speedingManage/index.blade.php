@@ -1,14 +1,15 @@
 @extends('companies.master')
 @section('pageTitle','User Management')
-
 @section('content')
-
 <div class="row">
 	<div class="col-12">
 		<div class="card">
 			<div class="card-body">
                 <h4 class="card-title">All Speeding Listing</h4>
 				<h6 class="card-subtitle">Here you can manage Speeding</h6>
+                <div class="right-side-struct pull-right">
+				    <a href="{{ url('/company/speed-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"><i class="fa fa-plus" aria-hidden="true"></i> Add New Speed </a>
+				</div>
                 <div class="table-responsive m-t-40">
                     @if(Session::has('status'))
 						<div class="alert alert-{{ Session::get('status') }}">
@@ -22,10 +23,6 @@
                                 <th>Value</th>
                                 <th>Cost (Value)</th>
                                 <th>speedType</th>
-                                <!--<th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Account Status</th>
-                                <th>Created Date</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
