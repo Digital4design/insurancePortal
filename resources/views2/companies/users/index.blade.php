@@ -1,15 +1,14 @@
 @extends('companies.master')
 @section('pageTitle','User Management')
+
 @section('content')
+
 <div class="row">
 	<div class="col-12">
 		<div class="card">
 			<div class="card-body">
-                <h4 class="card-title">All Speeding Listing</h4>
-				<h6 class="card-subtitle">Here you can manage Speeding</h6>
-                <div class="right-side-struct pull-right">
-				    <a href="{{ url('/company/speed-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"><i class="fa fa-plus" aria-hidden="true"></i> Add New Speed </a>
-				</div>
+                <h4 class="card-title">All Assets Listing</h4>
+				<h6 class="card-subtitle">Here you can manage Assets</h6>
                 <div class="table-responsive m-t-40">
                     @if(Session::has('status'))
 						<div class="alert alert-{{ Session::get('status') }}">
@@ -20,9 +19,13 @@
                 	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
-                                <th>Value</th>
-                                <th>Cost (Value)</th>
-                                <th>speedType</th>
+                                <!-- <th>First Name</th> -->
+                                <th>License Plate Number</th>
+                                <!--<th>Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Account Status</th>
+                                <th>Created Date</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -37,7 +40,43 @@
 	</div>
 </div>
 
-
+<!-- Modal Code -->
+<div class="modal fade" id="permissionModal" tabindex="-1" role="dialog" aria-labelledby="permissionModalLabel1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="permissionModalLabel1">Permission List</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{{ url('/company/user-management/accessRequest') }}" >
+                {{ csrf_field() }}
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label>Please select Permission</label>
+                                <div class="input-group">
+                                <input type="hidden" name="requestUserId" value=""/>
+                                    <ul class="icheck-list">
+                                     @foreach($permissionPolicy as $policy)
+                                        <li>
+                                            <input type="checkbox" name="permission[]" value="{{$policy->id}}" class="check" id="minimal-checkbox-{{$policy->id}}">
+                                            <label for="minimal-checkbox-{{$policy->id}}"> &nbsp; &nbsp; {{$policy->permissions_name}}</label>
+                                        </li>
+                                    @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="" class="btn btn-primary">Send message</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
 @stop
 
 @section('pagejs')
@@ -48,11 +87,12 @@ $(function() {
         serverSide: true,
         lengthMenu: [10,20,50,100],
         order: [[1,'desc']],
-        ajax: '{!! url("/company/speed-management/speed-data") !!}',
+        ajax: '{!! url("/company/user-management/user-data") !!}',
         columns: [
-            { data: 'speedingValue',		name: 'speedingValue', orderable: true },
-            { data: 'costValue',		name: 'costValue', orderable: true },
-            { data: 'speedType',		name: 'speedType', orderable: true },
+
+			//{ data: 'firstName',		name: 'firstName', orderable: true },
+            { data: 'driver_license_id',		name: 'driver_license_id', orderable: true },
+            // { data: 'name',		name: 'name', orderable: true },
 			// { data: 'email',	name: 'email', orderable: true },
             // { data: 'phone',	name: 'phone',	orderable: true, "visible":true },
             // { data: 'created_at',	name: 'created_at',	orderable: true, "visible":true },
@@ -116,7 +156,7 @@ $(document).on('click','.delete',function(){
               if (isConfirm.value === true) {
                   $('#dataTable_processing').show();
                   $.ajax({
-                      url:'{{ url("/company/speed-management/delete") }}'+'/'+id,
+                      url:'{{ url("/company/user-management/delete") }}'+'/'+id,
                       type: 'GET',
                       success:function(){
                           $('#dataTable_processing').hide();
@@ -125,7 +165,7 @@ $(document).on('click','.delete',function(){
                               'Your agent has been deleted successfully.',
                               'success'
                               ).then(function(){
-                                  window.location.href = '{{ url("/company/speed-management") }}';
+                                  window.location.href = '{{ url("/company/user-management") }}';
                             });
                     }
                 });

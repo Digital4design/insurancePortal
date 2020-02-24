@@ -4,20 +4,20 @@
 		<!-- Logo -->
 		<!-- ============================================================== -->
 		<div class="navbar-header">
-			<a class="navbar-brand" href="{{ url('/user') }}">
+			<a class="navbar-brand" href="{{ url('/admin') }}">
 				<b>
 					<!-- Dark Logo icon -->
-					<!-- <img src="{{ asset('public/assets/admin/images/icon.png') }}" alt="homepage" class="dark-logo" /> -->
+					<!-- <img src="{{ asset('public/assets/admin/images/logo-icon.png') }}" alt="homepage" class="dark-logo" /> -->
 					<!-- Light Logo icon -->
-					<img src="{{ asset('public/assets/admin/images/logo-light-text.png') }}" alt="homepage" class="light-logo" style="width: 190px;" />
+					<img src="{{ asset('public/assets/admin/images/logo_new.png') }}" alt="homepage" class="light-logo" style="width: 190px;" />
 				</b>
 				<!--End Logo icon -->
 				<!-- Logo text -->
 				<span>
 					<!-- dark Logo text -->
-					<img src="{{ asset('public/assets/admin/images/logo_new.png') }}" alt="homepage" class="dark-logo" style="width: 190px;" />
+					<img src="{{ asset('public/assets/admin/images/logo_new.png') }}" alt="homepage" class="dark-logo"  style="width: 190px;" />
 					<!-- Light Logo text -->
-					<img src="{{ asset('public/assets/admin/images/logo-light-text.png') }}" class="light-logo" alt="homepage" />
+					<img src="{{ asset('public/assets/admin/images/logo_new.png') }}" class="light-logo" alt="homepage" />
 				</span>
 			</a>
 		</div>
@@ -71,15 +71,15 @@
 									<div class="u-img"><img src="{{ asset('public/assets/admin/images/users/profile-photo.jpg') }}" alt="user"></div>
 									<div class="u-text">
 										<h4>{{ Auth::user()->name  }}</h4>
-										<p class="text-muted">{{ Auth::user()->email  }}</p><a href="{{ url('user/profile') }}" class="btn btn-rounded btn-danger btn-sm">View Profile</a>
+										<p class="text-muted">{{ Auth::user()->email  }}</p><a href="{{ url('admin/profile') }}" class="btn btn-rounded btn-danger btn-sm">View Profile</a>
 									</div>
 								</div>
 							</li>
 							<li role="separator" class="divider"></li>
-							<li><a href="{{ url('user/profile') }}"><i class="ti-user"></i> My Profile</a></li>
+							<li><a href="{{ url('admin/profile') }}"><i class="ti-user"></i> My Profile</a></li>
 
 							<li role="separator" class="divider"></li>
-							<li><a href="{{ url('user/profile') }}"><i class="ti-settings"></i> Account Setting</a></li>
+							<li><a href="{{ url('admin/profile') }}"><i class="ti-settings"></i> Account Setting</a></li>
 							<li role="separator" class="divider"></li>
 							<li>
 								<a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
@@ -88,6 +88,7 @@
 								<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
 									@csrf
 								</form>
+
 							</li>
 						</ul>
 					</div>

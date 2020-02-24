@@ -59,7 +59,7 @@
 
                                 <div class="col-md-6">
 									<div class="form-group  @error('speedType') has-danger @enderror ">
-										<label class="control-label">Speed Type</label><p class="req">speed/harsh</p>
+										<label class="control-label">Speed Type</label>
 										<select id="tracker_id" class="form-control @error('speedType') form-control-danger @enderror"  name="speedType">
                                             <option value="">Select Speed</option>
                                             <option value="speed" {{ ( $speedData->speedType == 'speed') ? 'selected' : '' }}>speed</option>

@@ -68,7 +68,9 @@
 						<ul class="dropdown-user">
 							<li>
 								<div class="dw-user-box">
-									<div class="u-img"><img src="{{ asset('public/assets/admin/images/users/profile-photo.jpg') }}" alt="user"></div>
+									<div class="u-img">
+										<img src="{{ asset('public/assets/admin/images/users/profile-photo.jpg') }}" alt="user">
+									</div>
 									<div class="u-text">
 										<h4>{{ Auth::user()->name  }}</h4>
 										<p class="text-muted">{{ Auth::user()->email  }}</p><a href="{{ url('company/profile') }}" class="btn btn-rounded btn-danger btn-sm">View Profile</a>
