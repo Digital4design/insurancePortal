@@ -1,6 +1,25 @@
 @extends('users.master')
 @section('pageTitle','Access Request Management')
 @section('content')
+@section('pageCss')
+<style>
+#permissionModal .form-group {
+    width: 50%;
+    float: left;
+}
+#permissionModal .modal-footer {
+    width: 100%;
+    float: left;
+}
+</style>
+@stop
+<?php
+// foreach ($trackerData as $key => $tracker) {
+//     dd($tracker);
+// }
+//dd($trackerData);
+//dd($permissionData);
+?>
 
 <div class="row">
     <div class="col-12">
@@ -19,10 +38,6 @@
                         <thead>
                             <tr>
                                 <th>Company Name</th>
-                                <!-- <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Account Status</th>
-                                <th>Created Date</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -40,28 +55,48 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="permissionModalLabel1">Permission List</h4>
+                <h4 class="modal-main-title">Access Permission</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 <form method="post" action="{{ url('/user/access-request-management/acceptRequest') }}" >
                 {{ csrf_field() }}
-                    <div class="form-group">
                         <div class="form-group">
                             <label>Please select Permission</label>
                                 <div class="input-group">
                                 <input type="hidden" name="requestUserId" value=""/>
                                     <ul class="icheck-list" id="permission_id">
-                                    
+
                                     </ul>
                                 </div>
-                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Please select Tracker</label>
+                                <div class="input-group">
+                                <input type="hidden" name="requestUserId" value=""/>
+                                    <ul class="icheck-list" id="tracker_id">
+                                    @forelse($trackerData as $tracker)
+                                    <?php // dd($tracker); ?>
+                                    <li>
+                                        <input type="checkbox" name="tracker_id[]" value="{{ $tracker['id'] }}" class="check" id="checkbox-{{ $tracker['id'] }}">
+                                        <label for="checkbox-{{ $tracker['id'] }}"> &nbsp; &nbsp; {{ $tracker['label'] }}</label>
+                                    </li>
+                                    @empty
+                                    <p>No users</p>
+                                    @endforelse
+
+                                    </ul>
+                                </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" name="" class="btn btn-primary">Send message</button>
                         </div>
-                </form>
+                    </form>
+
+
             </div>
 
         </div>
@@ -85,38 +120,6 @@
                     name: 'name',
                     orderable: true
                 },
-                // {
-                //     data: 'email',
-                //     name: 'email',
-                //     orderable: true
-                // },
-                // {
-                //     data: 'phone',
-                //     name: 'phone',
-                //     orderable: true
-                // },
-                // {
-                //     data: 'is_active',
-                //     name: 'is_active',
-                //     orderable: true,
-                //     render: function(data, type, row) {
-                //         if (row.is_active == 1) {
-                //             var status = 'success';
-                //             var text = 'Approved';
-                //         } else {
-                //             var status = 'danger';
-                //             var text = 'Disabled';
-                //         }
-                //         return '<span class="label label-' + status + '"> ' + text + ' </span>';
-                //     }
-                // },
-                // { data: 'website',	name: 'website',orderable: true, "visible":false },
-                // {
-                //     data: 'created_at',
-                //     name: 'created_at',
-                //     orderable: true,
-                //     "visible": true
-                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -155,28 +158,16 @@
         });
 
     });
-
     $(document).on("click", ".request_access", function(){
         var id = $(this).attr("data-id");
-        //alert(id);
         $("input[name=requestUserId]").val(id);
         $.ajax({
             url: '{{ url("/user/access-request-management/getRequestedData") }}' + '/' + id,
             type: 'GET',
             success: function(data) {
                 $('#permission_id').html(data.content);
-                
-                // $('#dataTable_processing').hide();
-                // swal(
-                //     'Deleted!',
-                //     'Company has been deleted successfully.',
-                //     'success'
-                //     ).then(function() {
-                //         window.location.href = '{{ url("/user/insurance-company-management") }}';
-                //     });
                 }
             });
-
     });
 
 
@@ -194,25 +185,20 @@
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn btn-danger',
             buttonsStyling: false
-
-        }).then(function(isConfirm) {
-
-            if (isConfirm.value === true) {
-
-                $('#dataTable_processing').show();
-
-                $.ajax({
-                    url: '{{ url("/user/insurance-company-management/delete") }}' + '/' + id,
-                    type: 'GET',
-                    success: function() {
-                        $('#dataTable_processing').hide();
-                        swal(
-                            'Deleted!',
-                            'Company has been deleted successfully.',
-                            'success'
-                        ).then(function() {
-
-                            window.location.href = '{{ url("/user/insurance-company-management") }}';
+            }).then(function(isConfirm) {
+                if (isConfirm.value === true) {
+                    $('#dataTable_processing').show();
+                    $.ajax({
+                        url: '{{ url("/user/insurance-company-management/delete") }}' + '/' + id,
+                        type: 'GET',
+                        success: function() {
+                            $('#dataTable_processing').hide();
+                            swal(
+                                'Deleted!',
+                                'Company has been deleted successfully.',
+                                'success'
+                                ).then(function() {
+                                    window.location.href = '{{ url("/user/insurance-company-management") }}';
                         });
                     }
                 });

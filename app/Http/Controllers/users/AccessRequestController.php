@@ -7,12 +7,13 @@ use App\Models\CompanyRequestPermissionModel;
 use App\Models\PermissionPolicyHolderModel;
 use App\Models\UserDetailsAccessModel;
 use App\Notifications\Users\UsersReaction;
+use App\Services\UserService;
 use App\User;
 use Auth;
 use Crypt;
 use DB;
 use Illuminate\Http\Request;
-use Redirect; 
+use Redirect;
 use Yajra\Datatables\Datatables;
 
 class AccessRequestController extends Controller
@@ -25,10 +26,29 @@ class AccessRequestController extends Controller
     {
         $this->middleware(['auth', 'users']);
     }
-    public function index()
+    public function index(Request $request, UserService $userService)
     {
         $data = array();
         $data['permissionPolicy'] = PermissionPolicyHolderModel::get();
+
+        $login = 'user/auth?login=' . Auth::user()->ontrac_username . '&password=' . Crypt::decrypt(Auth::user()->ontrac_password);
+        $userData = $userService->callAPI($login);
+
+        if ($userData['success'] == 'true') {
+            if (isset($userData['hash'])) {
+                $hash = $userData['hash'];
+            } else {
+                $hash = '';
+            }
+            $request->session()->put('hash', $hash);
+            $sessiondata = $request->session()->all();
+            $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
+            $data['trackerData'] = $userService->callAPI($trackerListUrl);
+            $data['trackerData'] = $data['trackerData']['list'];
+
+        } else {
+            $data['trackerData'] = array();
+        }
 
         return view('users.companyAccessRequest.index', $data);
     }
@@ -62,19 +82,50 @@ class AccessRequestController extends Controller
             ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
             ->where('users_details_access.id', $id)
             ->get();
-        //dd($result);
         $content = view('renders.permissionRender')->with(['result' => $result])->render();
         return response()->json(['content' => $content]);
+
+    }
+    public function grantAccessToCompany($id, Request $request, UserService $userService)
+    {
+        $data = array();
+        // $result = DB::table('users_details_access')
+        //     ->select('users_details_access.*', 'company_request_permission.id as req_id', 'company_request_permission.accept_status', 'permission_policy_holder.*')
+        //     ->join('company_request_permission', 'users_details_access.id', '=', 'company_request_permission.users_detail_id')
+        //     ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
+        //     ->where('users_details_access.id', $id)
+        //     ->get();
+        $login = 'user/auth?login=' . Auth::user()->ontrac_username . '&password=' . Crypt::decrypt(Auth::user()->ontrac_password);
+        $userData = $userService->callAPI($login);
+
+        if ($userData['success'] == 'true') {
+            if (isset($userData['hash'])) {
+                $hash = $userData['hash'];
+            } else {
+                $hash = '';
+            }
+            $request->session()->put('hash', $hash);
+            $sessiondata = $request->session()->all();
+            $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
+            $data['trackerData'] = $userService->callAPI($trackerListUrl);
+            $data['trackerData'] = $data['trackerData']['list'];
+
+        } else {
+            $data['trackerData'] = array();
+        }
+        $data['permissionData'] = $result;
+        return view('users.companyAccessRequest.grantAccess', $data);
 
     }
     public function acceptRequest(Request $request)
     {
         try {
+            DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
             $detailsAccess = UserDetailsAccessModel::where('id', $request->requestUserId)->first();
-
             $companyData = User::where('id', $detailsAccess->company_id)->first();
             $authUserData = Auth::user();
             if ($request->permission) {
+                DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
                 $permissionData = CompanyRequestPermissionModel::whereIn('id', $request->permission)->get()->toArray();
                 foreach ($permissionData as $key => $value) {
                     $perMissionId[] = $value['permission_policy_id'];
@@ -86,14 +137,24 @@ class AccessRequestController extends Controller
                 $strPrer = implode(',', $perString);
             }
             if ($request->permission) {
+                DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
                 DB::table('company_request_permission')
                     ->where('users_detail_id', $request->requestUserId)
                     ->update(array('accept_status' => '2'));
-
                 foreach ($request->permission as $key => $permissionId) {
                     DB::table('company_request_permission')
                         ->where('id', $permissionId)
                         ->update(array('accept_status' => '1'));
+                }
+                foreach ($request->tracker_id as $tracker_id) {
+                    DB::table('permission_list')->insert(
+                        [
+                            'access_id' => $request->requestUserId,
+                            'tracker_id' => $tracker_id,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]
+                    );
                 }
                 if ($request->permission) {
                     DB::table('users_details_access')
@@ -110,7 +171,6 @@ class AccessRequestController extends Controller
                         );
                         $companyData->notify(new UsersReaction($notificationData));
                     }
-
                 } else {
                     DB::table('users_details_access')
                         ->where('id', $request->requestUserId)
@@ -203,7 +263,7 @@ class AccessRequestController extends Controller
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
-
+                DB::table('permission_list')->where('access_id', \Crypt::decrypt($id))->delete();
                 $user = User::where('id', Auth::user()->id)->first();
                 $userData = User::where('id', $accessDetails->company_id)->first();
                 if ($user) {
@@ -242,6 +302,8 @@ class AccessRequestController extends Controller
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
+                DB::table('permission_list')->where('access_id', \Crypt::decrypt($id))->delete();
+
                 $user = User::where('id', Auth::user()->id)->first();
                 $userData = User::where('id', $accessDetails->company_id)->first();
                 if ($user) {
