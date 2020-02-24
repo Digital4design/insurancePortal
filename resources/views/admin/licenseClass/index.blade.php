@@ -2,12 +2,12 @@
 @section('pageTitle','License Management')
 
 @section('content')
-     
+
 <div class="row">
 	<div class="col-12">
 		<div class="card">
 			<div class="card-body">
-				
+
                 <div class="right-side-struct pull-right" >
 				    <a href="{{ url('/admin/license-class-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"  ><i class="fa fa-plus" aria-hidden="true"></i> Add New License Class </a>
 				</div>
@@ -17,12 +17,12 @@
 
 				<div class="table-responsive m-t-40">
                 @if(Session::has('status'))
-						<div class="alert alert-{{ Session::get('status') }}"> 
+						<div class="alert alert-{{ Session::get('status') }}">
 							<i class="ti-user"></i> {{ Session::get('message') }}
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 						</div>
 					@endif
-                	<table id="dataTable" class=" table table-striped table-bordered dataTable  "> 
+                	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
                                 <th>Country</th>
@@ -37,7 +37,7 @@
 				</div>
 			</div>
 		</div>
-                        
+
 	</div>
 </div>
 
@@ -49,7 +49,7 @@
 <script type="text/javascript">
 $(function() {
     $('#dataTable').DataTable({
-		
+
         processing : true,
         serverSide: true,
 		rowGroup: {
@@ -60,19 +60,19 @@ $(function() {
         order: [[0,'asc']],
         ajax: '{!! url("/admin/license-class-management/user-data") !!}',
         columns: [
-            //{ data: 'name',				name: 'name', orderable: true, visible: false },
-            { data: 'name',				name: 'name', orderable: true, visible: false },
+            { data: 'name',			name: 'name', orderable: true },
+            // { data: 'name',				name: 'name', orderable: true, visible: false },
             { data: 'license_class',	name: 'license_class', orderable: true },
             { data: 'description',		name: 'description', orderable: true },
             { data: 'action',			name: 'action', orderable: false,  },
         ],
-       
+
         dom: 'Blfrptip',
         buttons: [
                 {
                      extend: 'colvis',text: "Show / Hide Columns"
                 }
-        ], 
+        ],
         oLanguage: {
                 sProcessing: "<img height='80' width='80' src='{{ url('public/assets/admin/images/loading.gif') }}' alt='loader'/>",
 				"oPaginate": {
@@ -100,11 +100,9 @@ $(function() {
 	});
 
 });
- 
-$(document).on('click','.delete',function(){
 
+$(document).on('click','.delete',function(){
     var id = $(this).data('id');
-	
     swal({
           title: 'Are you sure?',
           text: "You won't be able to revert this!",
@@ -117,14 +115,10 @@ $(document).on('click','.delete',function(){
           confirmButtonClass: 'btn btn-success',
           cancelButtonClass: 'btn btn-danger',
           buttonsStyling: false
-
-        }).then(function (isConfirm) {
-
-            if (isConfirm.value === true) {
-
-				$('#dataTable_processing').show();
-                
-                $.ajax({
+          }).then(function (isConfirm) {
+              if (isConfirm.value === true) {
+                  $('#dataTable_processing').show();
+                  $.ajax({
                     url:'{{ url("/admin/license-class-management/delete") }}'+'/'+id,
                     type: 'GET',
                     success:function(){
@@ -137,7 +131,7 @@ $(document).on('click','.delete',function(){
                             window.location.href = '{{ url("/admin/license-class-management") }}';
                         });
                     }
-                });  
+                });
             }
         })
 });
