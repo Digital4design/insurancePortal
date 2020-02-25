@@ -20,7 +20,7 @@ class userTableSeeder extends Seeder
 				'lastName' => 'Admin',
 				'email' => 'testdigital4design@gmail.com',
 				'email_verified_at' =>  date("Y-m-d H:i:s"),
-				'password' => bcrypt('qwert@123'),
+				'password' => bcrypt('yourpassword'),
 				'remember_token' => null,
 				'profile_photo' => null,
 				'info' => null,
