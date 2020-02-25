@@ -11,6 +11,8 @@
     width: 100%;
     float: left;
 }
+
+
 </style>
 @stop
 <?php
@@ -62,17 +64,6 @@
                 <form method="post" action="{{ url('/user/access-request-management/acceptRequest') }}" >
                 {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Please select Permission</label>
-                                <div class="input-group">
-                                <input type="hidden" name="requestUserId" value=""/>
-                                    <ul class="icheck-list" id="permission_id">
-
-                                    </ul>
-                                </div>
-                        </div>
-
-
-                        <div class="form-group">
                             <label>Please select Tracker</label>
                                 <div class="input-group">
                                 <input type="hidden" name="requestUserId" value=""/>
@@ -90,13 +81,21 @@
                                     </ul>
                                 </div>
                         </div>
+
+                        <div class="form-group">
+                            <label>Please select Permission</label>
+                                <div class="input-group">
+                                <input type="hidden" name="requestUserId" value=""/>
+                                    <ul class="icheck-list" id="permission_id">
+                                    </ul>
+                                </div>
+                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" name="" class="btn btn-primary">Send message</button>
                         </div>
                     </form>
-
-
+                    
             </div>
 
         </div>
