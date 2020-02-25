@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CompanyRequestPermissionModel;
 use App\Models\CountryModel;
 use App\Models\LicenseClassModel;
+use App\Models\PermissionListModel;
 use App\Models\PermissionPolicyHolderModel;
 use App\Models\Role;
 use App\Models\UserDetailsAccessModel;
@@ -322,48 +323,63 @@ class UserManagementController extends Controller
 
     public function testShow($id, Request $request, UserService $userService)
     {
+
         $data['userId'] = $id;
         $user = User::find($id);
         return view('companies.users.testVeiw')->with(array('userId' => $id, 'userName' => $user['name']));
     }
     public function getTrackers($id, Request $request, UserService $userService)
     {
+
         $accessData = UserDetailsAccessModel::where('user_id', $id)
             ->where('company_id', Auth::user()->id)
             ->where('accept_status', '1')
             ->get()
             ->toArray();
-
-        //if (!empty($accessData)) {
-        $user = User::find($id);
-        if ($user) {
-            $login = 'user/auth?login=' . $user->ontrac_username . '&password=' . Crypt::decrypt($user->ontrac_password);
-            $userData = $userService->callAPI($login);
-            if ($userData['success'] == 'true') {
-                if (isset($userData['hash'])) {
-                    $hash = $userData['hash'];
+        //dd($accessData[0]['id']);
+        if (!empty($accessData)) {
+            $permissionList = PermissionListModel::select('tracker_id')->where('access_id', $accessData[0]['id'])->get()->toArray();
+            $user = User::find($id);
+            if ($user) {
+                $login = 'user/auth?login=' . $user->ontrac_username . '&password=' . Crypt::decrypt($user->ontrac_password);
+                $userData = $userService->callAPI($login);
+                if ($userData['success'] == 'true') {
+                    if (isset($userData['hash'])) {
+                        $hash = $userData['hash'];
+                    } else {
+                        $hash = '';
+                    }
+                    $request->session()->put('hash', $hash);
+                    $sessiondata = $request->session()->all();
+                    $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
+                    $data['trackerData'] = $userService->callAPI($trackerListUrl);
+                    $filter = array_filter($data['trackerData']['list'], function ($Fdata) use ($permissionList) {
+                        //  return (in_array($Fdata['id'], $permissionList))?$Fdata['id']:'';
+                        return (array_filter($permissionList, function ($ldata) use ($Fdata) {
+                            return ($Fdata['id'] == $ldata['tracker_id']) ? $Fdata : [];
+                        }));
+                    });
+                    if ($filter) {
+                        $data = $filter;
+                    } else {
+                        $data = array();
+                    }
                 } else {
-                    $hash = '';
+                    $data = array();
                 }
-                $request->session()->put('hash', $hash);
-                $sessiondata = $request->session()->all();
-                $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
-                $data['trackerData'] = $userService->callAPI($trackerListUrl);
-                $data = $data['trackerData']['list'];
-            } else {
-                $data = array();
+                return Datatables::of($data)
+                    ->addColumn('action', function ($data) use ($id) {
+                        return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $id . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
+                    })->make(true);
             }
-
+        } else {
+            $data = array();
             return Datatables::of($data)
                 ->addColumn('action', function ($data) use ($id) {
                     return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $id . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
                 })->make(true);
 
-            //return view('companies.users.testVeiw', $id);
         }
-        // } else {
-        //     return redirect('/company/user-management')->with(['status' => 'danger', 'message' => 'You have not access permissions!']);
-        // }
     }
 
     public function getTrackersReport($id, $user_id)
@@ -385,9 +401,7 @@ class UserManagementController extends Controller
             'user_id' => $user_id])
             ->get()
             ->toArray();
-        //dd($accessData);
         if ($accessData) {
-            // dd($id);
             // try {
             // Get Last Gps Point Data
             $sessiondata = $request->session()->all();
