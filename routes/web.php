@@ -203,6 +203,9 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
         Route::get('{id}/reject', 'users\AccessRequestController@requestReject');
         Route::get('{id}/withdraw', 'users\AccessRequestController@requestWithdraw');
         Route::get('getRequestedData/{id}', 'users\AccessRequestController@getRequestedData');
+        Route::get('getRequestedTrackerData/{id}/{tr_id}', 'users\AccessRequestController@getRequestedTrackerData');
+
+        
         Route::post('acceptRequest', 'users\AccessRequestController@acceptRequest');
 
         Route::get('create', 'users\AccessRequestController@create');
