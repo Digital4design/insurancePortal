@@ -8,7 +8,6 @@ class CreatePermissionListTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
@@ -19,8 +18,6 @@ class CreatePermissionListTable extends Migration
             $table->foreign('access_id')->references('id')->on('users_details_access')->onUpdate('cascade')->onDelete('cascade');
             $table->biginteger('permission_id')->unsigned()->nullable();
             $table->foreign('permission_id')->references('id')->on('permission_policy_holder')->onUpdate('cascade')->onDelete('cascade');
-
-            // $table->enum('speedType', ['speed', 'harsh'])->default('speed')->comment = 'speed / harsh';
             $table->string('tracker_id')->nullable();
             $table->timestamps();
         });
@@ -28,7 +25,6 @@ class CreatePermissionListTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down()
