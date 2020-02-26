@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\SpeedModel;
 use Auth;
 use Crypt;
+use DB;
 use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
@@ -15,16 +16,13 @@ class SpeedingController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
         $data['roles'] = Role::get();
         return view('companies.speedingManage.index', $data);
-
     }
-
     public function getSpeedData()
     {
         $result = SpeedModel::where('company_id', Auth::user()->id)->get();
@@ -38,19 +36,16 @@ class SpeedingController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
         $data['roles'] = Role::get();
         return view('companies.speedingManage.create', $data);
-
     }
 
     /**
      * Store a newly created resource in storage.
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -66,14 +61,26 @@ class SpeedingController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         try {
-            $speedData = SpeedModel::create([
-                'company_id' => Auth::user()->id,
-                'speedingValue' => $request->speedingValue,
-                'costValue' => $request->costValue,
-                'speedType' => $request->speedType,
-            ]);
 
-            return redirect('/company/speed-management')->with(['status' => 'success', 'message' => 'New ' . $request->speedType . ' Successfully created!']);
+            $speedData = DB::table('speeding')
+                ->where('speeding.company_id', Auth::user()->id)
+                ->where('speeding.costValue', $request->costValue)
+                ->where('speeding.speedType', $request->speedType)
+                ->get();
+                //->toArray();
+            //dd($speedData[0]);
+            if (count($speedData) > 0) {
+                return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
+            } else {
+                $speedData = SpeedModel::create([
+                    'company_id' => Auth::user()->id,
+                    'speedingValue' => $request->speedingValue,
+                    'costValue' => $request->costValue,
+                    'speedType' => $request->speedType,
+                ]);
+                return redirect('/company/speed-management')->with(['status' => 'success', 'message' => 'New ' . $request->speedType . ' Successfully created!']);
+            }
+
         } catch (\Exception $e) {
             return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
             return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
@@ -83,7 +90,6 @@ class SpeedingController extends Controller
 
     /**
      * Display the specified resource.
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -94,7 +100,6 @@ class SpeedingController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -114,14 +119,12 @@ class SpeedingController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //dd($id);
         $validator = Validator::make($request->all(), array(
             'speedingValue' => 'required',
             'costValue' => 'required|numeric',
@@ -149,12 +152,11 @@ class SpeedingController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        SpeedModel::find(Crypt::decrypt($id))->delete();
     }
 }

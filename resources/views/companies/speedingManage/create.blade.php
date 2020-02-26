@@ -25,15 +25,25 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('speedingValue') has-danger @enderror ">
                            <label class="control-label">Speeding Value</label>
-                           <input 
-                              type="text" 
-                              class="form-control @error('speedingValue') 
-                              form-control-danger @enderror " 
-                              id="speedingValue" 
-                              name="speedingValue" 
-                              placeholder="Speeding Value" 
-                              value="{{ old('speedingValue') }}" 
-                              />
+                           <select name="speedingValue" id="speedingValue" class="form-control">
+                                    <option value="">Select Status speeding Value</option>
+                                    <option value="1-10">1-10</option>
+                                    <option value="1-9">1-9</option>
+                                    <option value="1-8">1-8</option>
+                                    <option value="1-7">1-7</option>
+                                    <option value="1-6">1-6</option>
+                                    <option value="1-5">1-5</option>
+                                    <option value="1-5">1-5</option>
+                                </select>
+                           <!-- <input
+                              type="text"
+                              class="form-control @error('speedingValue')
+                              form-control-danger @enderror "
+                              id="speedingValue"
+                              name="speedingValue"
+                              placeholder="Speeding Value"
+                              value="{{ old('speedingValue') }}"
+                              /> -->
                            @error('speedingValue')
                            <small class="form-control-feedback">{{ $errors->first('speedingValue') }}</small>
                            @enderror
@@ -42,14 +52,14 @@
                      <div class="col-md-6">
                         <div class="form-group  @error('costValue') has-danger @enderror ">
                            <label class="control-label">Cost Value</label>
-                           <input 
-                              type="text" 
-                              class="form-control @error('costValue') 
-                              form-control-danger @enderror" 
-                              id="costValue" 
-                              name="costValue" 
-                              placeholder="Cost Value" 
-                              value="{{ old('costValue') }}" 
+                           <input
+                              type="text"
+                              class="form-control @error('costValue')
+                              form-control-danger @enderror"
+                              id="costValue"
+                              name="costValue"
+                              placeholder="Cost Value"
+                              value="{{ old('costValue') }}"
                               />
                            @error('costValue')
                            <small class="form-control-feedback">{{ $errors->first('costValue') }}</small>
