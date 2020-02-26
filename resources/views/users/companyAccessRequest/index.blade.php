@@ -73,6 +73,7 @@
                                     <li>
                                         <input type="checkbox" name="tracker_id[]" data-tr_id="{{ $tracker['id'] }}"  value="{{ $tracker['id'] }}" class="check request_permission"  id="checkbox-{{ $tracker['id'] }}">
                                         <label for="checkbox-{{ $tracker['id'] }}"> &nbsp; &nbsp; {{ $tracker['label'] }}</label>
+                                        
                                     </li>
                                     @empty
                                     <p>No users</p>

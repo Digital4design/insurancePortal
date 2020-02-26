@@ -89,16 +89,16 @@ class AccessRequestController extends Controller
 
     }
 
-    public function getRequestedTrackerData($id,$tr_d)
+    public function getRequestedTrackerData($id, $tr_d)
     {
-       // dd($id);
+        // dd($id);
         $result = DB::table('users_details_access')
             ->select('users_details_access.*', 'company_request_permission.id as req_id', 'company_request_permission.accept_status', 'permission_policy_holder.*')
             ->join('company_request_permission', 'users_details_access.id', '=', 'company_request_permission.users_detail_id')
             ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
             ->where('users_details_access.id', $id)
             ->get();
-        $content = view('renders.multplePermissionRender')->with(['result' => $result,'tr_id'=>$tr_d])->render();
+        $content = view('renders.multplePermissionRender')->with(['result' => $result, 'tr_id' => $tr_d])->render();
         return response()->json(['content' => $content]);
 
     }
@@ -135,7 +135,7 @@ class AccessRequestController extends Controller
     }
     public function acceptRequest(Request $request)
     {
-         dd($request->all());
+        // dd($request->all());
         try {
             DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
             $detailsAccess = UserDetailsAccessModel::where('id', $request->requestUserId)->first();
@@ -164,14 +164,20 @@ class AccessRequestController extends Controller
                         ->update(array('accept_status' => '1'));
                 }
                 foreach ($request->tracker_id as $tracker_id) {
-                    DB::table('permission_list')->insert(
-                        array(
-                            'access_id' => $request->requestUserId,
-                            'tracker_id' => $tracker_id,
-                            'created_at' => date('Y-m-d H:i:s'),
-                            'updated_at' => date('Y-m-d H:i:s'),
-                        )
-                    );
+                    $permissionArray = $request->permission[$tracker_id];
+                    foreach ($permissionArray as $key => $perm) {
+                        DB::table('permission_list')->insert(
+                            array(
+                                'access_id' => $request->requestUserId,
+                                'tracker_id' => $tracker_id,
+                                'permission_id' => $perm,
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            )
+                        );
+
+                    }
+
                 }
                 if ($request->permission) {
                     DB::table('users_details_access')
