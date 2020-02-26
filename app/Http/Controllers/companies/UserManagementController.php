@@ -478,7 +478,6 @@ class UserManagementController extends Controller
             } else {
                 $rating = $count;
             }
-
             $data['permission'] = DB::table('company_request_permission')
                 ->select('company_request_permission.*', 'permission_policy_holder.permissions_name')
                 ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
@@ -522,23 +521,18 @@ class UserManagementController extends Controller
                     'odometer' => $odometerData,
                 ),
             );
-
         } else {
             $result = array();
         }
-        // dd($result);
         return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
             return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
         })->make(true);
-
     }
 
     public function getTrackerData($id, $user_id, Request $request, UserService $userService)
     {
         $accessData = UserDetailsAccessModel::where(['company_id' => Auth::user()->id, 'accept_status' => '1', 'user_id' => $user_id])->get()->toArray();
-        //dd($accessData);
         if ($accessData) {
-            // dd($id);
             // try {
             // Get Last Gps Point Data
             $sessiondata = $request->session()->all();
@@ -613,7 +607,6 @@ class UserManagementController extends Controller
             } else {
                 $rating = $count . '/10';
             }
-
             $data['permission'] = DB::table('company_request_permission')
                 ->select('company_request_permission.*', 'permission_policy_holder.permissions_name')
                 ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
@@ -645,11 +638,10 @@ class UserManagementController extends Controller
                         $milage = 'Mileage No Permission';
                     }
                 } else {
-
+                    
                 }
             }
-            $result = array(
-                array(
+            $result = array(array(
                     'userData' => $userData['name'],
                     'mileage' => $milage,
                     'rating' => $retaing,
@@ -657,11 +649,9 @@ class UserManagementController extends Controller
                     'odometer' => $odometerData,
                 ),
             );
-
         } else {
             $result = array();
         }
-        // dd($result);
         return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
             return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
         })->make(true);

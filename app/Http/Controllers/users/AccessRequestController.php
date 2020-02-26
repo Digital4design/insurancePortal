@@ -253,12 +253,10 @@ class AccessRequestController extends Controller
             if ($accessDetails) {
                 $updateData = array(
                     "accept_status" => '2',
-                    //"updated_at"        => date('Y-m-d H:i:s')
                 );
                 $accessDetails->update($updateData);
                 $permissionData = array(
                     "accept_status" => '2',
-                    // "updated_at"        => date('Y-m-d H:i:s')
                 );
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
@@ -303,7 +301,6 @@ class AccessRequestController extends Controller
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
                 DB::table('permission_list')->where('access_id', \Crypt::decrypt($id))->delete();
-
                 $user = User::where('id', Auth::user()->id)->first();
                 $userData = User::where('id', $accessDetails->company_id)->first();
                 if ($user) {
