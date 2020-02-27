@@ -1,5 +1,5 @@
-  <label>Please select Permission for {{$tr_id}}</label>
- <ul  class="icheck-list">
+<label>Please select Permission for {{$tr_id}}</label>
+  <ul  class="icheck-list">
  @foreach($result as $policy)
 
  <li>
