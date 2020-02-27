@@ -92,7 +92,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth']], function 
         Route::post('{id}/update', 'Admin\EmailTemplateManagementController@update');
         Route::get('delete/{id}', 'Admin\EmailTemplateManagementController@destroy');
     });
-
     /*
     |------------------------------
     | Management Permissions here    |
@@ -119,7 +118,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth']], function 
         Route::get('{id}/view', 'Admin\LicenseClassManagementController@show');
         Route::get('delete/{id}', 'Admin\LicenseClassManagementController@destroy');
     });
-
     /*
     |-------------------------------
     | Vehicle Type management Here |
@@ -207,7 +205,6 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
 
         
         Route::post('acceptRequest', 'users\AccessRequestController@acceptRequest');
-
         Route::get('create', 'users\AccessRequestController@create');
         Route::post('/save-masjid', 'users\AccessRequestController@store');
         Route::post('/save-compain', 'users\AccessRequestController@store');
@@ -233,7 +230,6 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
         Route::get('{id}/edit', 'users\DriverManagementController@edit');
         Route::post('{id}/update', 'users\DriverManagementController@update');
         Route::get('delete/{id}', 'users\DriverManagementController@destroy');
-
         Route::get('/get-country-name/{id}', 'users\DriverManagementController@getCountryName');
     });
     /*
@@ -278,16 +274,13 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
 
         Route::post('{id}/update', 'companies\UserManagementController@update');
         Route::get('delete/{id}', 'companies\UserManagementController@destroy');
-
         Route::post('accessRequest', 'companies\UserManagementController@accessRequest');
         Route::get('get-trackers/{id}', 'companies\UserManagementController@getTrackers');
         Route::get('{id}/{userid}/reportShow', 'companies\UserManagementController@getTrackersReport');
-
         Route::get('get-tracker-data/{id}/{user_id}', 'companies\UserManagementController@getTrackerData');
         Route::get('get-tracker-report-data/{id}/{user_id}/{startDate}/{endDate}', 'companies\UserManagementController@getTrackersReportData');
 
     });
-
     Route::group(['prefix' => 'speed-management'], function () {
         Route::get('/', 'companies\SpeedingController@index');
         Route::get('speed-data', 'companies\SpeedingController@getSpeedData');
@@ -298,7 +291,6 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::post('{id}/update', 'companies\SpeedingController@update');
         Route::get('delete/{id}', 'companies\SpeedingController@destroy');
     });
-
     /*
     |-------------------------------------
     | Company Management Routes Here |

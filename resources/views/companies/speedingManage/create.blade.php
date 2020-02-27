@@ -35,7 +35,8 @@
                                     <option value="1-5">1-5</option>
                                     <option value="1-5">1-5</option>
                                 </select>
-                           <!-- <input
+                           <!-- 
+                              <input
                               type="text"
                               class="form-control @error('speedingValue')
                               form-control-danger @enderror "
@@ -43,7 +44,8 @@
                               name="speedingValue"
                               placeholder="Speeding Value"
                               value="{{ old('speedingValue') }}"
-                              /> -->
+                              /> 
+                           -->
                            @error('speedingValue')
                            <small class="form-control-feedback">{{ $errors->first('speedingValue') }}</small>
                            @enderror

@@ -61,16 +61,13 @@ class SpeedingController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         try {
-
             $speedData = DB::table('speeding')
                 ->where('speeding.company_id', Auth::user()->id)
                 ->where('speeding.costValue', $request->costValue)
                 ->where('speeding.speedType', $request->speedType)
                 ->get();
-                //->toArray();
-            //dd($speedData[0]);
             if (count($speedData) > 0) {
-                return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
+                return back()->with(['status' => 'danger', 'message' => 'This record already taken Try with other']);
             } else {
                 $speedData = SpeedModel::create([
                     'company_id' => Auth::user()->id,
@@ -80,14 +77,11 @@ class SpeedingController extends Controller
                 ]);
                 return redirect('/company/speed-management')->with(['status' => 'success', 'message' => 'New ' . $request->speedType . ' Successfully created!']);
             }
-
         } catch (\Exception $e) {
-            return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
+            // return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
             return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
         }
-
     }
-
     /**
      * Display the specified resource.
      * @param  int  $id
@@ -97,7 +91,6 @@ class SpeedingController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      * @param  int  $id
@@ -114,9 +107,7 @@ class SpeedingController extends Controller
         } catch (\Exception $e) {
             return back()->with(array('status' => 'danger', 'message' => $e->getMessage()));
         }
-
     }
-
     /**
      * Update the specified resource in storage.
      * @param  \Illuminate\Http\Request  $request
@@ -147,9 +138,7 @@ class SpeedingController extends Controller
             return back()->with(array('status' => 'danger', 'message' => $e->getMessage()));
             return back()->with(array('status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.'));
         }
-
     }
-
     /**
      * Remove the specified resource from storage.
      * @param  int  $id
