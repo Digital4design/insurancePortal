@@ -13,6 +13,6 @@ class PermissionListModel extends Model
      * @var array
      */
     protected $fillable = [
-        'access_id', 'tracker_id',
+        'access_id', 'tracker_id', 'permission_id',
     ];
 }

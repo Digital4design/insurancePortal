@@ -7,4 +7,5 @@
     <label for="minimal-checkbox-{{$policy->req_id}}{{$tr_id}}"> &nbsp; &nbsp; {{$policy->permissions_name}}</label>
  </li>
 @endforeach
+<hr/>
 </ul>
