@@ -395,13 +395,7 @@ class UserManagementController extends Controller
 
     public function getTrackersReportData($id, $user_id, $startData, $endDate, Request $request, UserService $userService)
     {
-        $accessData = UserDetailsAccessModel::where(array(
-            'company_id' => Auth::user()->id,
-            'accept_status' => '1',
-            'user_id' => $user_id,
-        ))
-            ->get()
-            ->toArray();
+        $accessData = UserDetailsAccessModel::where(array('company_id' => Auth::user()->id, 'accept_status' => '1', 'user_id' => $user_id))->get()->toArray();
         if ($accessData) {
             // try {
             // Get Last Gps Point Data
@@ -459,13 +453,27 @@ class UserManagementController extends Controller
 
             if ($data['harshData']['success'] == true) {
                 $harshD = array();
+                $harD = array();
+
                 foreach ($data['harshData']['list'] as $key => $harsh) {
                     if ($harsh['event'] == 'speedup') {
                         array_push($harshD, $harsh);
                     }
+
+                    if ($harsh['event'] == 'harsh_driving') {
+                        array_push($$harD, $harsh);
+                    }
+
                 }
             }
+            $data['speeding'] = DB::table('speeding')
+                ->where(['company_id' => Auth::user()->id])
+                ->get();
             $count = count($harshD);
+            //dd($harD);
+
+            // dd($data['speeding']);
+
             if ($count > 0) {
                 if ($count == 1) {
                     $rating = '9';
@@ -477,7 +485,7 @@ class UserManagementController extends Controller
                     $rating = $count;
                 }
             } else {
-                $rating = $count;
+                $rating = '10';
             }
             $data['permission'] = DB::table('company_request_permission')
                 ->select('company_request_permission.*', 'permission_policy_holder.permissions_name')
@@ -490,14 +498,12 @@ class UserManagementController extends Controller
                 ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'permission_list.permission_id')
                 ->where(['permission_list.access_id' => $accessData[0]['id']])
                 ->get();
-
             // dd($data['permissionData']);
 
             foreach ($data['permissionData'] as $key => $permission) {
                 //dd($permission);
                 if ($permission->permissions_name == "Location") {
                     $location = $location;
-
                     // if ($permission->accept_status == "1") {
                     //     $location = $location;
                     // } else {
@@ -505,7 +511,6 @@ class UserManagementController extends Controller
                     // }
                 } else if ($permission->permissions_name == "Odometer") {
                     $odometerData = $data['odometerData'];
-
                     // if ($permission->accept_status == "1") {
                     //     $odometerData = $data['odometerData'];
                     // } else {
@@ -513,7 +518,6 @@ class UserManagementController extends Controller
                     // }
                 } else if ($permission->permissions_name == "Violations") {
                     $retaing = $rating;
-
                     // if ($permission->accept_status == "1") {
                     //     $retaing = $rating;
                     // } else {
@@ -521,12 +525,11 @@ class UserManagementController extends Controller
                     // }
                 } else if ($permission->permissions_name == "Mileage") {
                     $milage = $data['lastGpsPointData']['mileage'];
-
-                    // if ($permission->accept_status == "1") {
-                    //     $milage = $data['lastGpsPointData']['mileage'];
-                    // } else {
-                    //     $milage = 'Mileage No Permission';
-                    // }
+                    if ($milage) {
+                        $milage = $milage;
+                    } else {
+                        $milage = 'Mileage No Permission';
+                    }
                 } else {
 
                 }
@@ -534,7 +537,7 @@ class UserManagementController extends Controller
             $result = array(
                 array(
                     'userData' => $userData['name'],
-                    'mileage' => $milage,
+                    //'mileage' => $milage,
                     'rating' => $retaing,
                     'mileageDa' => $sum,
                     'odometer' => $odometerData,
@@ -543,6 +546,7 @@ class UserManagementController extends Controller
         } else {
             $result = array();
         }
+        //dd($result);
         return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
             return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
         })->make(true);
