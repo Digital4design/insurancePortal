@@ -9,7 +9,7 @@
 			<div class="card-body">
 				
                 <div class="right-side-struct pull-right" >
-				    <a href="{{ url('/admin/fuel-type-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"  ><i class="fa fa-plus" aria-hidden="true"></i> Add New Vehicle </a>
+				    <a href="{{ url('/admin/fuel-type-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"  ><i class="fa fa-plus" aria-hidden="true"></i> Add Fuel Type </a>
 				</div>
 
                 <h4 class="card-title">All Fuel Management Listing</h4>

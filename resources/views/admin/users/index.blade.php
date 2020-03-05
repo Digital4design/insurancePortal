@@ -31,6 +31,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
+                                <th>Driver License Id</th>
                                 <th>Account Status</th>
                                 <th>Created Date</th>
                                 <th>Action</th>
@@ -68,6 +69,7 @@ $(function() {
             { data: 'name',		name: 'name', orderable: true },
 			{ data: 'email',	name: 'email', orderable: true },       
             { data: 'phone',	name: 'phone',	orderable: true, "visible":true },
+            { data: 'driver_license_id',	name: 'driver_license_id',	orderable: true, "visible":true },
             { data: 'is_active',	name: 'is_active', orderable: true, render: function ( data, type, row ){
 				if(row.is_active ==  1  ){ 
 					var status= 'success'; var text	=	'Approved'; 
