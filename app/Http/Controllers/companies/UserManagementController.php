@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\companies;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssestModel;
 use App\Models\CompanyRequestPermissionModel;
 use App\Models\CountryModel;
 use App\Models\LicenseClassModel;
@@ -52,14 +53,17 @@ class UserManagementController extends Controller
      */
     public function userData()
     {
-        $result = User::with(['getRole'])
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'user');
-            })->get();
+        // $result = User::with(['getRole'])
+        //     ->whereHas('roles', function ($q) {
+        //         $q->where('name', 'user');
+        //     })->get();
+
+        $result = AssestModel::get();
+        // dd($result);
+
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . ' data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
-
                 <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
             })->make(true);
     }
@@ -459,11 +463,9 @@ class UserManagementController extends Controller
                     if ($harsh['event'] == 'speedup') {
                         array_push($harshD, $harsh);
                     }
-
                     if ($harsh['event'] == 'harsh_driving') {
                         array_push($$harD, $harsh);
                     }
-
                 }
             }
             $data['speeding'] = DB::table('speeding')

@@ -39,9 +39,7 @@ class VehicleManagementController extends Controller
         foreach ($result['list'] as $key => $assets) {
             $data['assest'] = AssestModel::where('user_id', Auth::user()->id)->where('assets_id', $assets['id'])->get()->toArray();
             if (count($data['assest']) > 0) {
-
             } else {
-                // dd($data['assest']);
                 $userData = AssestModel::create([
                     'user_id' => Auth::user()->id,
                     'assets_id' => $assets['id'],
@@ -98,7 +96,6 @@ class VehicleManagementController extends Controller
         $data['trackerData'] = $userService->callAPI($requestUrl);
         return view('users.vehicleManagement.create', $data);
     }
-
     /**
      * Store a newly created resource in storage.
      * @param  \Illuminate\Http\Request  $request
@@ -106,7 +103,6 @@ class VehicleManagementController extends Controller
      */
     public function store(Request $request, UserService $userService)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'label' => 'required|max:255|min:2',
             'model' => 'required',
@@ -124,17 +120,6 @@ class VehicleManagementController extends Controller
         }
         try {
             if ($request->tracker_id === 'nullTracker') {$tracker_id = 'null';} else { $tracker_id = $request->tracker_id;}
-            // if (!empty($request->model)) {$model = $request->model;} else { $model = "";}
-            // if (!empty($request->max_speed)) {$max_speed = $request->max_speed;} else { $max_speed = "";}
-            // if (!empty($request->trailer)) {$trailer = $request->trailer;} else { $trailer = "";}
-            // if (!empty($request->manufacture_year)) {$manufacture_year = $request->manufacture_year;} else { $manufacture_year = 'null';}
-            // if (!empty($request->color)) {$color = $request->color;} else { $color = "";}
-            // if (!empty($request->additional_info)) {$additional_info = $request->additional_info;} else { $additional_info = "";}
-            // if (!empty($request->reg_number)) {$reg_number = $request->reg_number;} else { $reg_number = "";}
-            // if (!empty($request->chassis_number)) {$chassis_number = $request->chassis_number;} else { $chassis_number = "";}
-            // if (!empty($request->passengers)) {$passengers = $request->passengers;} else { $passengers = "";}
-            // if (!empty($request->fuel_grade)) {$fuel_grade = $request->fuel_grade;} else { $fuel_grade = "";}
-
             $sessiondata = $request->session()->all();
             $hash = $sessiondata['hash'];
             $newVehicleData = '{
@@ -174,17 +159,12 @@ class VehicleManagementController extends Controller
                 "icon_id" : 55,
                 "avatar_file_name": null
             }';
-            // dd($newVehicleData);
-
             $realArray = array(
                 'hash' => $hash,
                 'vehicle' => $newVehicleData,
             );
-            //dd($realArray);
-
             $requestUrl = 'vehicle/create';
             $userData = $userService->postAPI($requestUrl, $realArray);
-            // dd($userData);
             if ($userData['success'] === false) {
                 return back()->with(['apiErrorData' => $userData, 'status' => 'danger', 'message' => $userData['errors'][0]['error']]);
             } else {
