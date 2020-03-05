@@ -63,7 +63,7 @@ class UserManagementController extends Controller
 
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
-                return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . ' data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
+                return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . '   data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
                 <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
             })->make(true);
     }
@@ -135,43 +135,50 @@ class UserManagementController extends Controller
 
     public function accessRequest(Request $request)
     {
+
         try {
-            $accessData = UserDetailsAccessModel::where('user_id', $request->requestUserId)
-                ->where('company_id', Auth::user()->id)
-                ->get()
-                ->toArray();
+            // $accessData = UserDetailsAccessModel::where('user_id', $request->requestUserId)
+            //     ->where('company_id', Auth::user()->id)
+            //     ->get()
+            //     ->toArray();
+            $accessData = AssestModel::where('id', $request->requestUserId)
+                    ->get()
+                    ->toArray();
+            dd($accessData);
+
             if (empty($accessData)) {
                 $accessArray = array(
+                    'user_id' => $accessData[0]['user_id'],
                     'company_id' => Auth::user()->id,
-                    'user_id' => $request->requestUserId,
+                    'assets_id' => $accessData[0]['assets_id'],
                     'created_at' => date("Y-m-d H:i:s"),
                     'updated_at' => date("Y-m-d H:i:s"),
                 );
                 $lastId = UserDetailsAccessModel::insertGetId($accessArray);
-                foreach ($request->permission as $key => $permission_policy_id) {
-                    CompanyRequestPermissionModel::insert(array(
-                        'users_detail_id' => $lastId,
-                        'permission_policy_id' => $permission_policy_id,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                    ));
-                }
-                $permissionPolicyData = PermissionPolicyHolderModel::whereIn('id', $request->permission)->get()->toArray();
-                foreach ($permissionPolicyData as $key => $value) {
-                    $perString[] = $value['permissions_name'];
-                }
-                $strPrer = implode(',', $perString);
-                $notifyUser = User::where('id', $request->requestUserId)->first();
-                if ($lastId > 0) {
-                    $notificationData = array(
-                        "username" => "Request for access",
-                        "message" => ucfirst(Auth::user()->name) . " has request <b>" . $strPrer . "</b> permissions for access details",
-                        "useremail" => Auth::user()->name,
-                        "companyName" => Auth::user()->name,
-                        "permission" => $strPrer,
-                    );
-                    $notifyUser->notify(new accessPermission($notificationData));
-                }
+                // foreach ($request->permission as $key => $permission_policy_id) {
+                //     CompanyRequestPermissionModel::insert(array(
+                //         'users_detail_id' => $lastId,
+                //         'permission_policy_id' => $permission_policy_id,
+                //         'created_at' => date("Y-m-d H:i:s"),
+                //         'updated_at' => date("Y-m-d H:i:s"),
+                //     ));
+                // }
+                // $permissionPolicyData = PermissionPolicyHolderModel::whereIn('id', $request->permission)->get()->toArray();
+                // foreach ($permissionPolicyData as $key => $value) {
+                //     $perString[] = $value['permissions_name'];
+                // }
+                // $strPrer = implode(',', $perString);
+                // $notifyUser = User::where('id', $request->requestUserId)->first();
+                // if ($lastId > 0) {
+                //     $notificationData = array(
+                //         "username" => "Request for access",
+                //         "message" => ucfirst(Auth::user()->name) . " has request <b>" . $strPrer . "</b> permissions for access details",
+                //         "useremail" => Auth::user()->name,
+                //         "companyName" => Auth::user()->name,
+                //         "permission" => $strPrer,
+                //     );
+                //     $notifyUser->notify(new accessPermission($notificationData));
+                // }
                 if ($lastId > 0) {
                     return redirect('/company/user-management')->with(['status' => 'success', 'message' => 'Request send Successfully!']);
                 } else {
