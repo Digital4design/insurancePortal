@@ -171,17 +171,17 @@ class UserManagementController extends Controller
                     $perString[] = $value['permissions_name'];
                 }
                 $strPrer = implode(',', $perString);
-                $notifyUser = User::where('id', $request->requestUserId)->first();
-                if ($lastId > 0) {
-                    $notificationData = array(
-                        "username" => "Request for access",
-                        "message" => ucfirst(Auth::user()->name) . " has request <b>" . $strPrer . "</b> permissions for access details",
-                        "useremail" => Auth::user()->name,
-                        "companyName" => Auth::user()->name,
-                        "permission" => $strPrer,
-                    );
-                    $notifyUser->notify(new accessPermission($notificationData));
-                }
+                // $notifyUser = User::where('id', Auth::user()->id)->first();
+                // if ($lastId > 0) {
+                //     $notificationData = array(
+                //         "username" => "Request for access",
+                //         "message" => ucfirst(Auth::user()->name) . " has request <b>" . $strPrer . "</b> permissions for access details",
+                //         "useremail" => Auth::user()->name,
+                //         "companyName" => Auth::user()->name,
+                //         "permission" => $strPrer,
+                //     );
+                //     $notifyUser->notify(new accessPermission($notificationData));
+                // }
                 if ($lastId > 0) {
                     return redirect('/company/user-management')->with(['status' => 'success', 'message' => 'Request send Successfully!']);
                 } else {
@@ -207,7 +207,7 @@ class UserManagementController extends Controller
                     $perString[] = $value['permissions_name'];
                 }
                 $strPrer = implode(',', $perString);
-                $notifyUser = User::where('id', $request->requestUserId)->first();
+                $notifyUser = User::where('id', Auth::user()->id)->first();
                 if ($notifyUser) {
                     $notificationData = array(
                         "username" => "Request for access",
