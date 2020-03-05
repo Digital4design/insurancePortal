@@ -14,9 +14,9 @@ class CreateCompanyRequestPermissionTable extends Migration
     {
         Schema::create('company_request_permission', function (Blueprint $table) {
             $table->bigIncrements('id');
-            // $table->biginteger('users_detail_id')->unsigned()->nullable();
-            // $table->foreign('users_detail_id')->references('id')->on('users_details_access')->onUpdate('cascade')->onDelete('cascade');
-            $table->integer('users_detail_id')->nullable();
+            $table->biginteger('users_detail_id')->unsigned()->nullable();
+            $table->foreign('users_detail_id')->references('id')->on('users_details_access')->onUpdate('cascade')->onDelete('cascade');
+            // $table->integer('users_detail_id')->nullable();
             // $table->biginteger('permission_policy_id')->unsigned()->nullable();
             // $table->foreign('permission_policy_id')->references('id')->on('permission_policy_holder')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('permission_policy_id')->nullable();
