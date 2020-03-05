@@ -47,6 +47,7 @@ class UserManagementController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'user');
             })->get();
+        //dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<a href ="' . url('admin/user-management') . '/' . Crypt::encrypt($result->id) . '/edit"  class="btn btn-xs btn-primary edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
@@ -178,7 +179,7 @@ class UserManagementController extends Controller
                 $data['licenseClass'] = LicenseClassModel::Where('country_id', $user->addressCountry)
                     ->orderBy('license_class', 'ASC')
                     ->get();
-                    return view('admin.users.edit', $data);
+                return view('admin.users.edit', $data);
             }
         } catch (\Exception $e) {
             return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);

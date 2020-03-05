@@ -11,8 +11,6 @@
    .dataTable tr td.time_taken_long {     color: #000; background-color: yellow; }
 </style>
 @stop
-<?php 
-   ?>
 <input type="hidden" name="user_id" value="{{$userId}}">
 <input type="hidden" name="trackerId" value="{{$trackerId}}">
 <div class="">
@@ -34,7 +32,6 @@
                         </div>
                      </div>
                   </div>
-                 
                   <div class="text-left">
                      <button id="generate_btn" type="button" class="btn waves-effect waves-light btn-info">Generate Report</button>
                   </div>
@@ -64,14 +61,11 @@
       </div>
    </div>
 </div>
-
 @stop
 @section('pagejs')
 <script type="text/javascript">
-   
    ReportTable =$('#dataTable').DataTable();
    $("#generate_btn").on("click", function (event) {
-      // alert("jkhjkh");
       var userId = $('input[name=user_id]').val();
       var trackerId = $('input[name=trackerId]').val();
       var startDate = $('input[name=startDate]').val();
@@ -82,9 +76,7 @@
          return false;
       }
       ReportTable.destroy();
-
       ReportTable =$('#dataTable').DataTable({
-         //retrieve: true,
          processing: true,
          serverSide: true,
          lengthMenu: [10,20,50,100],
@@ -93,13 +85,11 @@
          columns: [
             { data:'userData',name: 'userData', orderable: true },
             { data:'rating',name: 'rating', orderable: true },
-            { data: 'odometer',name: 'odometer',	orderable: true, "visible":true },
-            { data: 'mileage',name: 'mileage',	orderable: true, "visible":true },
-            { data: 'action',name: 'action', orderable: false,  },
+            { data: 'odometer',name: 'odometer',orderable: true, "visible":true },
+            { data: 'mileageDa',name: 'mileageDa',orderable: true, "visible":true },
+            { data: 'action',name: 'action', orderable: false,},
          ],
-         
          dom: 'Blfrptip',
-         
          buttons: [
             'excel','pdf'
             // {
@@ -120,7 +110,7 @@
    			"sZeroRecords": "No matching records found",
    			"sEmptyTable": "No data available in table",
          },
-        // ReportTable . destroy();
+         // ReportTable . destroy();
          initComplete: function () {
             this.api().columns().every(function () {
                var column = this;
@@ -153,7 +143,7 @@
       $('#report_date').on('apply.daterangepicker', function(ev, picker) {
          $(this).val(picker.startDate.format('DD-M-Y') + ' - ' + picker.endDate.format('DD-M-Y'));
          $("#startDate").val(picker.startDate.format('YYYY-MM-DD'));
-         $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));  
+         $("#endDate").val(picker.endDate.format('YYYY-MM-DD'));
       });
    
    /*
@@ -202,12 +192,8 @@
    				});
    		});
    	}
-   }); 
-   
+   });
    */
-  
-   
-   
    
 </script>
 @stop

@@ -4,19 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFuelsTable extends Migration
+class CreateStatesTable extends Migration
 {
     /**
      * Run the migrations.
+     *
      * @return void
      */
     public function up()
     {
-        Schema::create('fuels', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('fuels_type')->nullable();
-            $table->longText('fuels_description')->nullable();
-            $table->timestamps();
+        Schema::create('states', function (Blueprint $table) {
+            $table->increments('id')->index();
+            $table->string('name');
+            $table->integer('country_id');
+            //$table->timestamps();
         });
     }
 
@@ -27,6 +28,6 @@ class CreateFuelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fuels');
+        Schema::dropIfExists('states');
     }
 }

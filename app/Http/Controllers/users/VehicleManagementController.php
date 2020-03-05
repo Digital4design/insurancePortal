@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\users;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssestModel;
 use App\Models\FuelModel;
 use App\Models\Role;
 use App\Models\VehicleModel;
 use App\Services\UserService;
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -33,6 +35,53 @@ class VehicleManagementController extends Controller
         $sessiondata = $request->session()->all();
         $requestedUrl = 'vehicle/list/?hash=' . $sessiondata['hash'];
         $result = $userService->callAPI($requestedUrl);
+
+        foreach ($result['list'] as $key => $assets) {
+            $data['assest'] = AssestModel::where('user_id', Auth::user()->id)->where('assets_id', $assets['id'])->get()->toArray();
+            if (count($data['assest']) > 0) {
+
+            } else {
+                // dd($data['assest']);
+                $userData = AssestModel::create([
+                    'user_id' => Auth::user()->id,
+                    'assets_id' => $assets['id'],
+                    'tracker_id' => $assets['tracker_id'],
+                    'label' => $assets['label'],
+                    'max_speed' => $assets['max_speed'],
+                    "model" => $assets['model'],
+                    "type" => $assets['type'],
+                    //'subtype' => $assets['subtype'],
+                    'garage_id' => $assets['garage_id'],
+                    'status_id' => $assets['status_id'],
+                    'trailer' => $assets['trailer'],
+                    'manufacture_year' => $assets['manufacture_year'],
+                    'color' => $assets['color'],
+                    'additional_info' => $assets['additional_info'],
+                    'reg_number' => $assets['reg_number'],
+                    'vin' => $assets['vin'],
+                    'frame_number' => $assets['frame_number'],
+                    'payload_weight' => $assets['payload_weight'],
+                    'payload_height' => $assets['payload_height'],
+                    'payload_length' => $assets['payload_length'],
+                    'payload_width' => $assets['payload_width'],
+                    'passengers' => $assets['passengers'],
+                    'gross_weight' => $assets['gross_weight'],
+                    'fuel_type' => $assets['fuel_type'],
+                    'fuel_grade' => $assets['fuel_grade'],
+                    'norm_avg_fuel_consumption' => $assets['norm_avg_fuel_consumption'],
+                    'fuel_tank_volume' => $assets['fuel_tank_volume'],
+                    'fuel_cost' => $assets['fuel_cost'],
+                    'wheel_arrangement' => $assets['wheel_arrangement'],
+                    'tyre_size' => $assets['tyre_size'],
+                    'tyres_number' => $assets['tyres_number'],
+                    'liability_insurance_policy_number' => $assets['liability_insurance_policy_number'],
+                    'liability_insurance_valid_till' => $assets['liability_insurance_valid_till'],
+                    'free_insurance_policy_number' => $assets['free_insurance_policy_number'],
+                    'free_insurance_valid_till' => $assets['free_insurance_valid_till'],
+                ]);
+            }
+        }
+
         return $result = json_encode($result);
     }
     /**
@@ -44,7 +93,6 @@ class VehicleManagementController extends Controller
         $data['roles'] = Role::get();
         $data['vehicleData'] = VehicleModel::get();
         $data['fuelData'] = FuelModel::get();
-
         $sessiondata = $request->session()->all();
         $requestUrl = "tracker/list?hash=" . $sessiondata['hash'];
         $data['trackerData'] = $userService->callAPI($requestUrl);

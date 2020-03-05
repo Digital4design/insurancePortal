@@ -71,25 +71,35 @@
                                     @forelse($trackerData as $tracker)
                                     <?php // dd($tracker); ?>
                                     <li>
-                                        <input type="checkbox" name="tracker_id[]" value="{{ $tracker['id'] }}" class="check" id="checkbox-{{ $tracker['id'] }}">
+                                        <input type="checkbox" name="tracker_id[]" data-tr_id="{{ $tracker['id'] }}"  value="{{ $tracker['id'] }}" class="check request_permission"  id="checkbox-{{ $tracker['id'] }}">
                                         <label for="checkbox-{{ $tracker['id'] }}"> &nbsp; &nbsp; {{ $tracker['label'] }}</label>
+                                        
                                     </li>
                                     @empty
                                     <p>No users</p>
                                     @endforelse
-
                                     </ul>
                                 </div>
                         </div>
 
                         <div class="form-group">
+                                <!-- <label>Please select Permission</label> -->
+                                    <div class="input-group">
+                                    <input type="hidden" name="requestUserId" value=""/>
+                                    <div id="permission_id_div"></div>
+                                    <!-- <ul  id="permission_id">
+                                    </ul> -->
+                                </div>
+                        </div>
+
+                        <!-- <div class="form-group">
                             <label>Please select Permission</label>
                                 <div class="input-group">
                                 <input type="hidden" name="requestUserId" value=""/>
                                     <ul class="icheck-list" id="permission_id">
                                     </ul>
                                 </div>
-                        </div>
+                        </div> -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" name="" class="btn btn-primary">Send message</button>
@@ -160,14 +170,32 @@
     $(document).on("click", ".request_access", function(){
         var id = $(this).attr("data-id");
         $("input[name=requestUserId]").val(id);
+        $(".request_permission").attr("data-id",id);
+        
+        
+
+        // $.ajax({
+        //     url: '{{ url("/user/access-request-management/getRequestedData") }}' + '/' + id,
+        //     type: 'GET',
+        //     success: function(data) {
+        //         $('#permission_id').html(data.content);
+        //         }
+        //     });
+    });
+
+    $(document).on("click", ".request_permission", function(){
+        var id = $(this).attr("data-id");
+        var tr_id =$(this).attr("data-tr_id");
         $.ajax({
-            url: '{{ url("/user/access-request-management/getRequestedData") }}' + '/' + id,
+            url: '{{ url("/user/access-request-management/getRequestedTrackerData") }}' + '/' + id+'/'+tr_id,
             type: 'GET',
             success: function(data) {
-                $('#permission_id').html(data.content);
+                $('#permission_id_div').append(data.content);
                 }
             });
     });
+
+   
 
 
     $(document).on('click', '.delete', function() {

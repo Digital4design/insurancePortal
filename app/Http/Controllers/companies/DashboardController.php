@@ -17,7 +17,7 @@ class DashboardController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['auth', 'company']);
+        $this->middleware(['auth', 'company']); 
     }
     public function index()
     {
@@ -66,23 +66,6 @@ class DashboardController extends Controller
             $save_profile->phone = $request->phone;
             $save_profile->info = $request->info;
             $save_profile->save();
-            /*
-            if($request->profile_picture !=""){
-            $user_save = User::find(Auth::user()->id);
-            if($user_save->profile_photo !=""){
-            if (file_exists(public_path('/userProfile/'.$user_save->profile_photo)))
-            {
-            $del_previous_pic = unlink(public_path('/userProfile/'.$user_save->profile_photo));
-            }
-            }
-            $file = $request->file('profile_picture');
-            $filename = 'admin-picture-'.time().'.'.$file->getClientOriginalExtension();
-            $file->move('public/userProfile',$filename);
-
-            $user_save->profile_photo = $filename;
-            $user_save->save();
-            }
-             */
             return redirect('/company/profile')->with(array('status' => 'success', 'message' => 'Profile details updated successfully!'));
         } catch (\Exception $e) {
             return redirect('/company/profile')->with(array('status' => 'danger', 'message' => 'Something went wrong. Please try again later.'));
@@ -105,17 +88,6 @@ class DashboardController extends Controller
             $save_profile->phone = $request->phone;
             $save_profile->info = $request->info;
             $save_profile->save();
-            /*
-            if($request->hasFile('profile_picture'))
-            {
-            $user = User::find(Auth::user()->id);
-            $file = $request->file('profile_picture');
-            $filename = 'admin-'.time().'.'.$file->getClientOriginalExtension();
-            $file->move('public/images/profile_pictures/',$filename);
-            $user->profile_picture = $filename;
-            $user->save();
-            }
-             */
             return redirect('/company/profile')->with(array('status' => 'success', 'message' => 'Profile details updated successfully!'));
         } catch (\Exception $e) {
             return back()->with(array('status' => 'danger', 'message' => $e->getMessage()));
