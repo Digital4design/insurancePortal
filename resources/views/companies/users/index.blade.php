@@ -91,7 +91,8 @@ $(function() {
         columns: [
 
 			//{ data: 'firstName',		name: 'firstName', orderable: true },
-            { data: 'driver_license_id',		name: 'driver_license_id', orderable: true },
+            //{ data: 'driver_license_id',		name: 'driver_license_id', orderable: true },
+            { data: 'reg_number',		name: 'reg_number', orderable: true },
             // { data: 'name',		name: 'name', orderable: true },
 			// { data: 'email',	name: 'email', orderable: true },
             // { data: 'phone',	name: 'phone',	orderable: true, "visible":true },

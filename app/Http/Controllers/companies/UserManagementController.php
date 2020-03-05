@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\companies;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssestModel;
 use App\Models\CompanyRequestPermissionModel;
 use App\Models\CountryModel;
 use App\Models\LicenseClassModel;
@@ -52,14 +53,16 @@ class UserManagementController extends Controller
      */
     public function userData()
     {
-        $result = User::with(['getRole'])
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'user');
-            })->get();
+        // $result = User::with(['getRole'])
+        //     ->whereHas('roles', function ($q) {
+        //         $q->where('name', 'user');
+        //     })->get();
+
+        $result = AssestModel::get();
+        // dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
-                return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . ' data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
-
+                return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . '   data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
                 <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
             })->make(true);
     }
@@ -131,19 +134,30 @@ class UserManagementController extends Controller
 
     public function accessRequest(Request $request)
     {
+
         try {
-            $accessData = UserDetailsAccessModel::where('user_id', $request->requestUserId)
+            $accessData = AssestModel::where('id', $request->requestUserId)
+                ->get()
+                ->toArray();
+
+            $accessFirstData = UserDetailsAccessModel::where('assets_id', $accessData[0]['assets_id'])
                 ->where('company_id', Auth::user()->id)
                 ->get()
                 ->toArray();
-            if (empty($accessData)) {
+
+            //dd($accessData);
+
+            if (empty($accessFirstData)) {
                 $accessArray = array(
+                    'user_id' => $accessData[0]['user_id'],
                     'company_id' => Auth::user()->id,
-                    'user_id' => $request->requestUserId,
+                    'assets_id' => $accessData[0]['assets_id'],
                     'created_at' => date("Y-m-d H:i:s"),
                     'updated_at' => date("Y-m-d H:i:s"),
                 );
                 $lastId = UserDetailsAccessModel::insertGetId($accessArray);
+                //dd($lastId);
+
                 foreach ($request->permission as $key => $permission_policy_id) {
                     CompanyRequestPermissionModel::insert(array(
                         'users_detail_id' => $lastId,
@@ -459,11 +473,9 @@ class UserManagementController extends Controller
                     if ($harsh['event'] == 'speedup') {
                         array_push($harshD, $harsh);
                     }
-
                     if ($harsh['event'] == 'harsh_driving') {
                         array_push($$harD, $harsh);
                     }
-
                 }
             }
             $data['speeding'] = DB::table('speeding')
