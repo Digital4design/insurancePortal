@@ -40,6 +40,7 @@
                         <thead>
                             <tr>
                                 <th>Company Name</th>
+                                <th>Trackers Name</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -68,11 +69,11 @@
                                 <div class="input-group">
                                 <input type="hidden" name="requestUserId" value=""/>
                                     <ul class="icheck-list" id="tracker_id">
-                                    @forelse($trackerData as $tracker)
-                                    <?php // dd($tracker); ?>
+                                    @forelse($permission as $tracker)
+                                    <?php // dd($tracker->permissions_name); ?>
                                     <li>
-                                        <input type="checkbox" name="tracker_id[]" data-tr_id="{{ $tracker['id'] }}"  value="{{ $tracker['id'] }}" class="check request_permission"  id="checkbox-{{ $tracker['id'] }}">
-                                        <label for="checkbox-{{ $tracker['id'] }}"> &nbsp; &nbsp; {{ $tracker['label'] }}</label>
+                                        <input type="checkbox" name="tracker_id[]" data-tr_id="{{ $tracker->id }}"  value="{{ $tracker->id }}" class="check request_permission"  id="checkbox-{{ $tracker->id }}">
+                                        <label for="checkbox-{{ $tracker->id }}"> &nbsp; &nbsp; {{ $tracker->permissions_name }}</label>
                                         
                                     </li>
                                     @empty
@@ -92,14 +93,7 @@
                                 </div>
                         </div>
 
-                        <!-- <div class="form-group">
-                            <label>Please select Permission</label>
-                                <div class="input-group">
-                                <input type="hidden" name="requestUserId" value=""/>
-                                    <ul class="icheck-list" id="permission_id">
-                                    </ul>
-                                </div>
-                        </div> -->
+                        
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" name="" class="btn btn-primary">Send message</button>
@@ -127,6 +121,11 @@
             columns: [{
                     data: 'name',
                     name: 'name',
+                    orderable: true
+                },
+                {
+                    data: 'reg_number',
+                    name: 'reg_number',
                     orderable: true
                 },
                 {
@@ -171,29 +170,19 @@
         var id = $(this).attr("data-id");
         $("input[name=requestUserId]").val(id);
         $(".request_permission").attr("data-id",id);
-        
-        
-
-        // $.ajax({
-        //     url: '{{ url("/user/access-request-management/getRequestedData") }}' + '/' + id,
-        //     type: 'GET',
-        //     success: function(data) {
-        //         $('#permission_id').html(data.content);
-        //         }
-        //     });
     });
 
-    $(document).on("click", ".request_permission", function(){
-        var id = $(this).attr("data-id");
-        var tr_id =$(this).attr("data-tr_id");
-        $.ajax({
-            url: '{{ url("/user/access-request-management/getRequestedTrackerData") }}' + '/' + id+'/'+tr_id,
-            type: 'GET',
-            success: function(data) {
-                $('#permission_id_div').append(data.content);
-                }
-            });
-    });
+    // $(document).on("click", ".request_permission", function(){
+    //     var id = $(this).attr("data-id");
+    //     var tr_id =$(this).attr("data-tr_id");
+    //     $.ajax({
+    //         url: '{{ url("/user/access-request-management/getRequestedTrackerData") }}' + '/' + id+'/'+tr_id,
+    //         type: 'GET',
+    //         success: function(data) {
+    //             $('#permission_id_div').append(data.content);
+    //             }
+    //         });
+    // });
 
    
 
