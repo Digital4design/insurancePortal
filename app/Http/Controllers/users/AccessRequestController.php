@@ -28,14 +28,9 @@ class AccessRequestController extends Controller
     }
     public function index(Request $request, UserService $userService)
     {
-        $result = DB::table('company_request_permission')
-            ->select('company_request_permission.id', 'permission_policy_holder.permissions_name')
-            ->join('permission_policy_holder', 'company_request_permission.permission_policy_id', '=', 'permission_policy_holder.id')
-            ->where('company_request_permission.users_detail_id', '2')
-            ->get();
 
         // dd($result);
-        
+
         $data = array();
         $data['permissionPolicy'] = PermissionPolicyHolderModel::get();
         $login = 'user/auth?login=' . Auth::user()->ontrac_username . '&password=' . Crypt::decrypt(Auth::user()->ontrac_password);
@@ -51,10 +46,10 @@ class AccessRequestController extends Controller
             $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
             $data['trackerData'] = $userService->callAPI($trackerListUrl);
             $data['trackerData'] = $data['trackerData']['list'];
-            $data['permission']=$result;
+            //$data['permission'] = $result;
         } else {
             $data['trackerData'] = array();
-            $data['permission'] = $result;
+            //$data['permission'] = $result;
 
         }
         //dd($data);
@@ -64,12 +59,11 @@ class AccessRequestController extends Controller
     public function requestData()
     {
         $result = DB::table('users_details_access')
-            ->select('users.name','assets.reg_number', 'users_details_access.*')
+            ->select('users.name', 'assets.reg_number', 'users_details_access.*')
             ->join('users', 'users_details_access.company_id', '=', 'users.id')
             ->join('assets', 'assets.assets_id', '=', 'users_details_access.assets_id')
             ->where('users_details_access.user_id', Auth::user()->id)
             ->get();
-            // dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 if ($result->accept_status == 0) {
@@ -95,12 +89,9 @@ class AccessRequestController extends Controller
             ->get();
         $content = view('renders.permissionRender')->with(['result' => $result])->render();
         return response()->json(['content' => $content]);
-
     }
-
     public function getRequestedTrackerData($id, $tr_d)
     {
-        // dd($id);
         $result = DB::table('users_details_access')
             ->select('users_details_access.*', 'company_request_permission.id as req_id', 'company_request_permission.accept_status', 'permission_policy_holder.*')
             ->join('company_request_permission', 'users_details_access.id', '=', 'company_request_permission.users_detail_id')
@@ -144,15 +135,33 @@ class AccessRequestController extends Controller
     }
     public function acceptRequest(Request $request)
     {
-        // dd($request->all());
+        
         try {
-            DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
             $detailsAccess = UserDetailsAccessModel::where('id', $request->requestUserId)->first();
+            
+
             $companyData = User::where('id', $detailsAccess->company_id)->first();
+            
+
             $authUserData = Auth::user();
             if ($request->permission) {
-                DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
+                foreach ($request->permission as $tracker) {
+                   
+
+                    DB::table('company_request_permission')
+                        ->where('users_detail_id', $request->requestUserId)
+                        ->update(array(
+                            'accept_status' => '1',
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ));
+                }
+
+                DB::table('users_details_access')
+                    ->where('id', $request->requestUserId)
+                    ->update(array('accept_status' => '1'));
+
                 $permissionData = CompanyRequestPermissionModel::whereIn('id', $request->permission)->get()->toArray();
+
                 foreach ($permissionData as $key => $value) {
                     $perMissionId[] = $value['permission_policy_id'];
                 }
@@ -161,13 +170,16 @@ class AccessRequestController extends Controller
                     $perString[] = $value['permissions_name'];
                 }
                 $strPrer = implode(',', $perString);
+
+                return redirect('/user/access-request-management')->with(['status' => 'success', 'message' => 'Permission Successfully created!']);
+
             }
-            if ($request->permission) {
-                DB::table('permission_list')->where('access_id', $request->requestUserId)->delete();
+
+            if ($request->tracker_id) {
                 DB::table('company_request_permission')
                     ->where('users_detail_id', $request->requestUserId)
                     ->update(array('accept_status' => '2'));
-                foreach ($request->permission as $key => $permissionId) {
+                foreach ($request->tracker_id as $key => $permissionId) {
                     DB::table('company_request_permission')
                         ->where('id', $permissionId)
                         ->update(array('accept_status' => '1'));
@@ -175,24 +187,20 @@ class AccessRequestController extends Controller
                 foreach ($request->tracker_id as $tracker_id) {
                     $permissionArray = $request->permission[$tracker_id];
                     foreach ($permissionArray as $key => $perm) {
-                        DB::table('permission_list')->insert(
-                            array(
-                                'access_id' => $request->requestUserId,
-                                'tracker_id' => $tracker_id,
-                                'permission_id' => $perm,
-                                'created_at' => date('Y-m-d H:i:s'),
-                                'updated_at' => date('Y-m-d H:i:s'),
-                            )
-                        );
-
+                        DB::table('permission_list')->insert(array(
+                            'access_id' => $request->requestUserId,
+                            'tracker_id' => $tracker_id,
+                            'permission_id' => $perm,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ));
                     }
-
                 }
-                if ($request->permission) {
+                if ($request->tracker_id) {
                     DB::table('users_details_access')
                         ->where('id', $request->requestUserId)
                         ->update(array('accept_status' => '1'));
-                    if ($request->permission) {
+                    if ($request->tracker_id) {
                         $notificationData = array(
                             "subject" => "User give access permission",
                             "username" => "User give access permission",

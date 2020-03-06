@@ -53,17 +53,12 @@ class UserManagementController extends Controller
      */
     public function userData()
     {
-        // $result = User::with(['getRole'])
-        //     ->whereHas('roles', function ($q) {
-        //         $q->where('name', 'user');
-        //     })->get();
-
         $result = AssestModel::get();
         // dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . '   data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
-                <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
+                <a href ="' . url('company/user-management') . '/' . $result->assets_id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
             })->make(true);
     }
     /**
@@ -337,9 +332,9 @@ class UserManagementController extends Controller
 
     public function testShow($id, Request $request, UserService $userService)
     {
-
         $data['userId'] = $id;
         $user = User::find($id);
+        //dd($data);
         return view('companies.users.testVeiw')->with(array('userId' => $id, 'userName' => $user['name']));
     }
     public function getTrackers($id, Request $request, UserService $userService)
