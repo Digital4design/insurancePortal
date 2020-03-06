@@ -34,7 +34,7 @@ class AccessRequestController extends Controller
             ->where('company_request_permission.users_detail_id', '2')
             ->get();
 
-        dd($result);
+        // dd($result);
         
         $data = array();
         $data['permissionPolicy'] = PermissionPolicyHolderModel::get();
