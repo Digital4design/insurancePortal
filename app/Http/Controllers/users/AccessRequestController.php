@@ -33,7 +33,9 @@ class AccessRequestController extends Controller
             ->join('permission_policy_holder', 'company_request_permission.permission_policy_id', '=', 'permission_policy_holder.id')
             ->where('company_request_permission.users_detail_id', '2')
             ->get();
-        //dd($result);
+
+        dd($result);
+        
         $data = array();
         $data['permissionPolicy'] = PermissionPolicyHolderModel::get();
         $login = 'user/auth?login=' . Auth::user()->ontrac_username . '&password=' . Crypt::decrypt(Auth::user()->ontrac_password);
@@ -49,18 +51,25 @@ class AccessRequestController extends Controller
             $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
             $data['trackerData'] = $userService->callAPI($trackerListUrl);
             $data['trackerData'] = $data['trackerData']['list'];
+            $data['permission']=$result;
         } else {
             $data['trackerData'] = array();
+            $data['permission'] = $result;
+
         }
+        //dd($data);
+
         return view('users.companyAccessRequest.index', $data);
     }
     public function requestData()
     {
         $result = DB::table('users_details_access')
-            ->select('users.name', 'users_details_access.*')
+            ->select('users.name','assets.reg_number', 'users_details_access.*')
             ->join('users', 'users_details_access.company_id', '=', 'users.id')
+            ->join('assets', 'assets.assets_id', '=', 'users_details_access.assets_id')
             ->where('users_details_access.user_id', Auth::user()->id)
             ->get();
+            // dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 if ($result->accept_status == 0) {
