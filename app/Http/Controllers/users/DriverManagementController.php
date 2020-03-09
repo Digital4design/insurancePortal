@@ -46,6 +46,7 @@ class DriverManagementController extends Controller
         try {
             $login = 'user/auth?login=' . $request->userEmail . '&password=' . $request->userPassword;
             $userData = $userService->callAPI($login);
+            // dd($userData);
             if (isset($userData['hash'])) {
                 $hash = $userData['hash'];
             } else {
@@ -58,7 +59,10 @@ class DriverManagementController extends Controller
             } else {
                 DB::table('users')
                     ->where('id', Auth::user()->id)
-                    ->update(['ontrac_username' => $request->userEmail, 'ontrac_password' => Crypt::encrypt($request->userPassword)]);
+                    ->update([
+                        'ontrac_username' => $request->userEmail,
+                        'ontrac_password' => Crypt::encrypt($request->userPassword),
+                    ]);
                 return response()->json(array('status' => 'success', 'message' => 'login Successfully.'));
             }
         } catch (\Exception $e) {
@@ -96,7 +100,11 @@ class DriverManagementController extends Controller
      */
     public function store(Request $request, UserService $userService)
     {
-        if ($request->tracker_id === 'nullTracker') {$tracker_id = 'null';} else { $tracker_id = $request->tracker_id;}
+        if ($request->tracker_id === 'nullTracker') {
+            $tracker_id = 'null';
+        } else {
+            $tracker_id = $request->tracker_id;
+        }
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|max:255|min:2',
             'middle_name' => 'required',

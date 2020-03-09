@@ -7,7 +7,6 @@ use App\Models\AssestModel;
 use App\Models\CompanyRequestPermissionModel;
 use App\Models\CountryModel;
 use App\Models\LicenseClassModel;
-use App\Models\PermissionListModel;
 use App\Models\PermissionPolicyHolderModel;
 use App\Models\Role;
 use App\Models\UserDetailsAccessModel;
@@ -58,7 +57,7 @@ class UserManagementController extends Controller
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . '   data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
-                <a href ="' . url('company/user-management') . '/' . $result->assets_id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
+                <a href ="' . url('company/user-management') . '/' . $result->id . '/show"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>View</a>';
             })->make(true);
     }
     /**
@@ -332,23 +331,21 @@ class UserManagementController extends Controller
 
     public function testShow($id, Request $request, UserService $userService)
     {
-        $data['userId'] = $id;
-        $user = User::find($id);
+        $trackerData = AssestModel::where('id', $id)->get()->toArray();
+        //dd($trackerData);
+        $data['userId'] = $trackerData[0]['user_id'];
+        $user = User::find($trackerData[0]['user_id']);
         //dd($data);
         return view('companies.users.testVeiw')->with(array('userId' => $id, 'userName' => $user['name']));
     }
     public function getTrackers($id, Request $request, UserService $userService)
     {
-
-        $accessData = UserDetailsAccessModel::where('user_id', $id)
-            ->where('company_id', Auth::user()->id)
-            ->where('accept_status', '1')
-            ->get()
-            ->toArray();
-        //dd($accessData[0]['id']);
-        if (!empty($accessData)) {
-            $permissionList = PermissionListModel::select('tracker_id')->where('access_id', $accessData[0]['id'])->get()->toArray();
-            $user = User::find($id);
+        $trackerData = AssestModel::where('id', $id)->get()->toArray();
+        $userId =$trackerData[0]['user_id'];
+        $user = User::find($trackerData[0]['user_id']);
+        if (!empty($trackerData)) {
+            $permissionList = UserDetailsAccessModel::select('assets_id')->where('assets_id', $trackerData[0]['assets_id'])->get()->toArray();
+            $user = User::find($trackerData[0]['user_id']);
             if ($user) {
                 $login = 'user/auth?login=' . $user->ontrac_username . '&password=' . Crypt::decrypt($user->ontrac_password);
                 $userData = $userService->callAPI($login);
@@ -362,10 +359,10 @@ class UserManagementController extends Controller
                     $sessiondata = $request->session()->all();
                     $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
                     $data['trackerData'] = $userService->callAPI($trackerListUrl);
+                    
                     $filter = array_filter($data['trackerData']['list'], function ($Fdata) use ($permissionList) {
-                        //  return (in_array($Fdata['id'], $permissionList))?$Fdata['id']:'';
                         return (array_filter($permissionList, function ($ldata) use ($Fdata) {
-                            return ($Fdata['id'] == $ldata['tracker_id']) ? $Fdata : [];
+                            return ($Fdata['id'] == $ldata['assets_id']) ? $Fdata : [];
                         }));
                     });
                     if ($filter) {
@@ -376,16 +373,17 @@ class UserManagementController extends Controller
                 } else {
                     $data = array();
                 }
+                // dd($data);
                 return Datatables::of($data)
-                    ->addColumn('action', function ($data) use ($id) {
-                        return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $id . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
+                    ->addColumn('action', function ($data) use ($userId) {
+                        return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $userId . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
                     })->make(true);
             }
         } else {
             $data = array();
             return Datatables::of($data)
                 ->addColumn('action', function ($data) use ($id) {
-                    return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $id . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
+                    return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $userId . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
                 })->make(true);
 
         }
