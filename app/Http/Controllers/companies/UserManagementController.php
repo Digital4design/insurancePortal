@@ -128,7 +128,6 @@ class UserManagementController extends Controller
 
     public function accessRequest(Request $request)
     {
-
         try {
             $accessData = AssestModel::where('id', $request->requestUserId)
                 ->get()
@@ -138,7 +137,6 @@ class UserManagementController extends Controller
                 ->where('company_id', Auth::user()->id)
                 ->get()
                 ->toArray();
-
             //dd($accessData);
 
             if (empty($accessFirstData)) {
@@ -317,7 +315,6 @@ class UserManagementController extends Controller
                         ->get();
                     $data['country'] = CountryModel::where('id', $user->addressCountry)->get()->toArray();
                     $data['licenseClass'] = LicenseClassModel::where('id', $user->driver_license_class)->get()->toArray();
-
                     // dd($data);
                     return view('companies.users.view_user', $data);
                 }
@@ -332,7 +329,7 @@ class UserManagementController extends Controller
     public function testShow($id, Request $request, UserService $userService)
     {
         $trackerData = AssestModel::where('id', $id)->get()->toArray();
-        //dd($trackerData);
+        // dd($trackerData);
         $data['userId'] = $trackerData[0]['user_id'];
         $user = User::find($trackerData[0]['user_id']);
         //dd($data);
@@ -341,10 +338,14 @@ class UserManagementController extends Controller
     public function getTrackers($id, Request $request, UserService $userService)
     {
         $trackerData = AssestModel::where('id', $id)->get()->toArray();
-        $userId =$trackerData[0]['user_id'];
+
+        $userId = $trackerData[0]['user_id'];
+        $tracker_id = $trackerData[0]['tracker_id'];
+        $assets_id = $trackerData[0]['assets_id'];
         $user = User::find($trackerData[0]['user_id']);
         if (!empty($trackerData)) {
-            $permissionList = UserDetailsAccessModel::select('assets_id')->where('assets_id', $trackerData[0]['assets_id'])->get()->toArray();
+            $permissionList = UserDetailsAccessModel::select('assets_id')->where('assets_id', $assets_id)->get()->toArray();
+            // dd($permissionList);
             $user = User::find($trackerData[0]['user_id']);
             if ($user) {
                 $login = 'user/auth?login=' . $user->ontrac_username . '&password=' . Crypt::decrypt($user->ontrac_password);
@@ -359,7 +360,7 @@ class UserManagementController extends Controller
                     $sessiondata = $request->session()->all();
                     $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
                     $data['trackerData'] = $userService->callAPI($trackerListUrl);
-                    
+
                     $filter = array_filter($data['trackerData']['list'], function ($Fdata) use ($permissionList) {
                         return (array_filter($permissionList, function ($ldata) use ($Fdata) {
                             return ($Fdata['id'] == $ldata['assets_id']) ? $Fdata : [];
