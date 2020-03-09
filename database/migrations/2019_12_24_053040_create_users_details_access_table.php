@@ -8,7 +8,6 @@ class CreateUsersDetailsAccessTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
@@ -18,9 +17,9 @@ class CreateUsersDetailsAccessTable extends Migration
             $table->biginteger('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             // $table->integer('user_id')->nullable();
-            $table->integer('company_id')->nullable();
-            // $table->biginteger('company_id')->unsigned()->nullable();
-            // $table->foreign('company_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            // $table->integer('company_id')->nullable();
+            $table->biginteger('company_id')->unsigned()->nullable();
+            $table->foreign('company_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('assets_id')->nullable();
             $table->enum('accept_status', ['0','1','2'])->default(0)->comment = '0 = pending / 1 = accept_status is true / 2 = accept_status is reject';
             $table->timestamps();
@@ -29,7 +28,6 @@ class CreateUsersDetailsAccessTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down()

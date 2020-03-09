@@ -28,6 +28,7 @@ class VehicleManagementController extends Controller
     public function index()
     {
         $data['roles'] = Role::get();
+        //dd($data['roles']);
         return view('users.vehicleManagement.index', $data);
     }
     public function driverData(Request $request, UserService $userService)
@@ -35,12 +36,12 @@ class VehicleManagementController extends Controller
         $sessiondata = $request->session()->all();
         $requestedUrl = 'vehicle/list/?hash=' . $sessiondata['hash'];
         $result = $userService->callAPI($requestedUrl);
-
+        // dd($result);
         foreach ($result['list'] as $key => $assets) {
             $data['assest'] = AssestModel::where('user_id', Auth::user()->id)->where('assets_id', $assets['id'])->get()->toArray();
             if (count($data['assest']) > 0) {
             } else {
-                $userData = AssestModel::create([
+                $userData = AssestModel::create([ 
                     'user_id' => Auth::user()->id,
                     'assets_id' => $assets['id'],
                     'tracker_id' => $assets['tracker_id'],

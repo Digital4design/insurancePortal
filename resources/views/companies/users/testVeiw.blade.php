@@ -16,8 +16,10 @@
 
 ?>
 <input type="hidden" name="user_id" value="{{$userId}}">
+<input type="hidden" name="assets_id" value="{{$assets_id}}">
+
 <div class="row">
-	<div class="col-12">
+	<div class="col-12"> 
 		<div class="card">
 			<div class="card-body">
 				<h4 class="card-title">All Tracker Listing</h4>
@@ -58,12 +60,13 @@
 @section('pagejs')
 <script type="text/javascript">
 	var userId = $('input[name=user_id]').val();
+	var assets_id = $('input[name=assets_id]').val();
 	$('#dataTable').DataTable({
 		processing : true,
 		serverSide: true,
 		lengthMenu: [10,20,50,100],
 		order: [[1,'desc']],
-		ajax: '{{ url("/company/user-management/get-trackers") }}'+'/'+userId,
+		ajax: '{{ url("/company/user-management/get-trackers") }}'+'/'+assets_id,
 		columns: [
 			{ data: 'id', name: 'id', orderable: true },
 			{ data: 'label', name: 'label', orderable: true },
