@@ -419,14 +419,7 @@ class UserManagementController extends Controller
 
     public function getTrackersReportData($id, $user_id, $startData, $endDate, Request $request, UserService $userService)
     {
-        //echo $id."</br>".$user_id;
-        $accessData = UserDetailsAccessModel::where(
-            array(
-                'company_id' => Auth::user()->id,
-                'accept_status' => '1', 'user_id' => $user_id,
-            )
-        )->get()->toArray();
-        
+        $accessData = UserDetailsAccessModel::where(array('company_id' => Auth::user()->id,'accept_status' => '1', 'user_id' => $user_id,))->get()->toArray();
         if ($accessData) {
             // try {
             // Get Last Gps Point Data
@@ -440,23 +433,16 @@ class UserManagementController extends Controller
 
             $getStateUrl = "tracker/get_state/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
             $data['getStateData'] = $userService->callAPI($getStateUrl);
-            
-
             $data['getStateData'] = $data['getStateData']['state'];
 
             // Get Readings Data
             $readingsUrl = "tracker/readings/list/?hash=" . $sessiondata['hash'] . "&tracker_id=" . $id;
             $data['getReadingsData'] = $userService->callAPI($readingsUrl);
-            
-
-
             // Get Tracker List Data
             $userData = User::find($user_id);
             $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
              
             $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
-            
-
             if (!empty($data['trackerlistData']['list'])) {
                 $data['trackerlistData'] = array_reverse($data['trackerlistData']['list']);
                 $data['trackerlistData'] = $data['trackerlistData'][0];
@@ -479,14 +465,10 @@ class UserManagementController extends Controller
             // Get Mileage Data
             $requestUrl = "tracker/stats/mileage/read/?hash=" . $sessiondata['hash'] . "&trackers=[" . $id . "]&from=" . $currentData . "%2000:00:00&to=" . $lastData . "%2023:59:59";
             $data['mileageData'] = $userService->callAPI($requestUrl);
-            
-
             $sum = 0;
             foreach ($data['mileageData']['result'] as $key => $mileageD) {
                 $sum += $mileageD[$currentData]['mileage'];
             }
-            
-
             // Get User Access Details
             $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from='.$currentData.'%2008:00:00&to='.$lastData.'%2023:59:59&events=["harsh_driving","speedup"]';
             // dd($harshUrl);
@@ -495,15 +477,9 @@ class UserManagementController extends Controller
             if ($data['harshData']['success'] == true) {
                 $harshD = array();
                 $harD = array();
-
                 foreach ($data['harshData']['list'] as $key => $harsh) {
-                    // dd($harsh['event']);
-                    // if ($harsh['event'] == 'speedup') {
-                    //     array_push($harshD, $harsh);
-                    // }
                     if ($harsh['event'] = 'harsh_driving') {
                        array_push($harshD, $harsh);
-
                     }
                 }
             }
@@ -574,9 +550,7 @@ class UserManagementController extends Controller
             $result = array(
                 array(
                     'userData' => $userData['name'],
-                    //'mileage' => $milage,
-                    //'rating' => 0,
-
+                    'mileage' => $milage,
                     'rating' => $retaing,
                     'mileageDa' => $sum,
                     'odometer' => $odometerData,
