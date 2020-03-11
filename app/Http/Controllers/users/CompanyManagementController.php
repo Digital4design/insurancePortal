@@ -151,7 +151,7 @@ class CompanyManagementController extends Controller
     public function show($id)
     {
         $masjidData = User::find(\Crypt::decrypt($id));
-        return view('users.masjid.masjid_view')->with(array('masjidData' => $masjidData,));
+        return view('users.masjid.masjid_view')->with(array('masjidData' => $masjidData));
     }
 
     /**

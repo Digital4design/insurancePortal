@@ -231,7 +231,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
         Route::get('{id}/edit', 'users\DriverManagementController@edit');
         Route::post('{id}/update', 'users\DriverManagementController@update');
         Route::get('delete/{id}', 'users\DriverManagementController@destroy');
-        Route::get('/get-country-name/{id}', 'users\DriverManagementController@getCountryName');
+        Route::get('/get-country-name/{id}', 'users\DriverManagementController@getCountryName'); 
     });
     /*
     |---------------------------------------

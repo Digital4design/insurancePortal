@@ -47,7 +47,6 @@ class VehicleManagementController extends Controller
                 ->get()
                 ->toArray();
             $arr2[] = $assets['id'];
-
             if (count($data['assest']) > 0) {
                 $assetsData = AssestModel::where('assets_id', $assets['id'])->first();
                 $assetData = AssestModel::find($assetsData['id']);
@@ -130,10 +129,10 @@ class VehicleManagementController extends Controller
             }
         }
         $diffArray = array_diff($arr, $arr2);
-        if(!empty($diffArray)){
+        if (!empty($diffArray)) {
             DB::table('assets')->whereIn('assets_id', $diffArray)->delete();
         }
-        
+
         return $result = json_encode($vehicleData);
     }
     /**

@@ -289,7 +289,7 @@ class UserManagementController extends Controller
                         $requestUrl = "employee/list?hash=" . $sessiondata['hash'];
                         $data['employeeData'] = $userService->callAPI($requestUrl);
                         $data['employeeData'] = $data['employeeData']['list'];
-                        $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata['hash'] . '&trackers=[' . $tracke_id . ']&from='.date("Y-m-d").'%2000:00:00&to='.date("Y-m-d").'%2023:59:59&events=[%22input_change%22,%20%22security_control%22,%20%22harsh_driving%22,%22speedup%22]';
+                        $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata['hash'] . '&trackers=[' . $tracke_id . ']&from=' . date("Y-m-d") . '%2000:00:00&to=' . date("Y-m-d") . '%2023:59:59&events=[%22input_change%22,%20%22security_control%22,%20%22harsh_driving%22,%22speedup%22]';
 
                         $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
                     } else {
