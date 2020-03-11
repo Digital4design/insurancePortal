@@ -38,8 +38,7 @@ class VehicleManagementController extends Controller
         $assestData = AssestModel::where('user_id', Auth::user()->id)->get()->toArray();
         $arr = array();
         foreach ($assestData as $key => $assestValue) {
-            $arr[] = $assestValue['id'];
-            
+            $arr[] = $assestValue['assets_id'];
         }
         $arr2 = array();
         foreach ($vehicleData['list'] as $key => $assets) {
@@ -47,7 +46,7 @@ class VehicleManagementController extends Controller
                 ->where('assets_id', $assets['id'])
                 ->get()
                 ->toArray();
-            $arr2 = $assets['id'];
+            $arr2[] = $assets['id'];
 
             if (count($data['assest']) > 0) {
                 $assetsData = AssestModel::where('assets_id', $assets['id'])->first();
@@ -130,9 +129,11 @@ class VehicleManagementController extends Controller
                 ]);
             }
         }
-        //dd($arr2);
-        // $dd = array_diff($arr, $arr2);
-        // print_r($dd);
+        $diffArray = array_diff($arr, $arr2);
+        if(!empty($diffArray)){
+            DB::table('assets')->whereIn('assets_id', $diffArray)->delete();
+        }
+        
         return $result = json_encode($vehicleData);
     }
     /**

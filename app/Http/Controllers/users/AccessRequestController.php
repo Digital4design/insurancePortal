@@ -152,7 +152,7 @@ class AccessRequestController extends Controller
                     $notificationData = array(
                         "subject" => "User give access permission",
                         "username" => "User give access permission",
-                        "message" => ucfirst(Auth::user()->name) . " has given you access to " . $strPrer . " permissions for Vehicle " . Auth::user()->driver_license_id,
+                        "message" => ucfirst(Auth::user()->name) . " has given you access to " . strtoupper($strPrer) . " permissions for Vehicle " . Auth::user()->driver_license_id,
                         "useremail" => Auth::user()->name,
                         "companyName" => Auth::user()->name,
                         "permission" => $strPrer,
@@ -179,7 +179,7 @@ class AccessRequestController extends Controller
                         $notificationData = array(
                             "subject" => "User give access permission",
                             "username" => "User give access permission",
-                            "message" => ucfirst(Auth::user()->name) . " has given you access to " . $strPrer . " permissions for Vehicle " . Auth::user()->driver_license_id,
+                            "message" => ucfirst(Auth::user()->name) . " has given you access to " . strtoupper($strPrer) . " permissions for Vehicle " . Auth::user()->driver_license_id,
                             "useremail" => Auth::user()->name,
                             "companyName" => Auth::user()->name,
                             "permission" => $strPrer,
@@ -194,7 +194,7 @@ class AccessRequestController extends Controller
                     $notificationData = array(
                         "subject" => "User remove access permission",
                         "username" => "User remove access permission",
-                        "message" => ucfirst(Auth::user()->name) . " has given you access to " . $strPrer . " permissions for Vehicle " . Auth::user()->driver_license_id,
+                        "message" => ucfirst(Auth::user()->name) . " has given you access to " . strtoupper($strPrer) . " permissions for Vehicle " . Auth::user()->driver_license_id,
                         "useremail" => Auth::user()->name,
                         "companyName" => Auth::user()->name,
                         "permission" => "User remove access permission",
