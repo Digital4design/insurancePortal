@@ -53,7 +53,6 @@ class UserManagementController extends Controller
     public function userData()
     {
         $result = AssestModel::where('tracker_id', '!=', '')->get();
-        //dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . '   data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
@@ -132,12 +131,11 @@ class UserManagementController extends Controller
             $accessData = AssestModel::where('id', $request->requestUserId)
                 ->get()
                 ->toArray();
-
             $accessFirstData = UserDetailsAccessModel::where('assets_id', $accessData[0]['assets_id'])
                 ->where('company_id', Auth::user()->id)
                 ->get()
                 ->toArray();
-            //dd($accessData);
+            // dd($accessFirstData);
 
             if (empty($accessFirstData)) {
                 $accessArray = array(
@@ -148,8 +146,6 @@ class UserManagementController extends Controller
                     'updated_at' => date("Y-m-d H:i:s"),
                 );
                 $lastId = UserDetailsAccessModel::insertGetId($accessArray);
-                //dd($lastId);
-
                 foreach ($request->permission as $key => $permission_policy_id) {
                     CompanyRequestPermissionModel::insert(array(
                         'users_detail_id' => $lastId,
@@ -163,17 +159,17 @@ class UserManagementController extends Controller
                     $perString[] = $value['permissions_name'];
                 }
                 $strPrer = implode(',', $perString);
-                // $notifyUser = User::where('id', Auth::user()->id)->first();
-                // if ($lastId > 0) {
-                //     $notificationData = array(
-                //         "username" => "Request for access",
-                //         "message" => ucfirst(Auth::user()->name) . " has request <b>" . $strPrer . "</b> permissions for access details",
-                //         "useremail" => Auth::user()->name,
-                //         "companyName" => Auth::user()->name,
-                //         "permission" => $strPrer,
-                //     );
-                //     $notifyUser->notify(new accessPermission($notificationData));
-                // }
+                $notifyUser = User::where('id', $accessData[0]['user_id'])->first();
+                if ($lastId > 0) {
+                    $notificationData = array(
+                        "username" => "Request for access",
+                        "message" => ucfirst(Auth::user()->name) . " has request " . strtoupper($strPrer) . " permissions for access details",
+                        "useremail" => Auth::user()->name,
+                        "companyName" => Auth::user()->name,
+                        "permission" => $strPrer,
+                    );
+                    $notifyUser->notify(new accessPermission($notificationData));
+                }
                 if ($lastId > 0) {
                     return redirect('/company/user-management')->with(['status' => 'success', 'message' => 'Request send Successfully!']);
                 } else {
@@ -181,13 +177,13 @@ class UserManagementController extends Controller
                 }
             } else {
                 foreach ($request->permission as $key => $permission_policy_id) {
-                    $companyRequestData = CompanyRequestPermissionModel::where('users_detail_id', $accessData[0]['id'])
+                    $companyRequestData = CompanyRequestPermissionModel::where('users_detail_id', $accessFirstData[0]['id'])
                         ->where('permission_policy_id', $permission_policy_id)
                         ->get()
                         ->toArray();
                     if (empty($companyRequestData)) {
                         CompanyRequestPermissionModel::insert(array(
-                            'users_detail_id' => $accessData[0]['id'],
+                            'users_detail_id' => $accessFirstData[0]['id'],
                             'permission_policy_id' => $permission_policy_id,
                             'created_at' => date("Y-m-d H:i:s"),
                             'updated_at' => date("Y-m-d H:i:s"),
@@ -199,11 +195,11 @@ class UserManagementController extends Controller
                     $perString[] = $value['permissions_name'];
                 }
                 $strPrer = implode(',', $perString);
-                $notifyUser = User::where('id', Auth::user()->id)->first();
+                $notifyUser = User::where('id', $accessData[0]['user_id'])->first();
                 if ($notifyUser) {
                     $notificationData = array(
                         "username" => "Request for access",
-                        "message" => ucfirst(Auth::user()->name) . " has request " . $strPrer . " permissions for access details",
+                        "message" => ucfirst(Auth::user()->name) . " has request " . strtoupper($strPrer) . " permissions for access details",
                         "useremail" => Auth::user()->name,
                         "companyName" => Auth::user()->name,
                         "permission" => $strPrer,
@@ -282,8 +278,6 @@ class UserManagementController extends Controller
                         $request->session()->put('hash', $hash);
                         $sessiondata = $request->session()->all();
                         $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
-                        // dd($trackerListUrl);
-
                         $data['trackerData'] = $userService->callAPI($trackerListUrl);
                         $data['trackerData'] = $data['trackerData']['list'];
                         $tracke_id = array();
@@ -295,12 +289,9 @@ class UserManagementController extends Controller
                         $requestUrl = "employee/list?hash=" . $sessiondata['hash'];
                         $data['employeeData'] = $userService->callAPI($requestUrl);
                         $data['employeeData'] = $data['employeeData']['list'];
+                        $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata['hash'] . '&trackers=[' . $tracke_id . ']&from='.date("Y-m-d").'%2000:00:00&to='.date("Y-m-d").'%2023:59:59&events=[%22input_change%22,%20%22security_control%22,%20%22harsh_driving%22,%22speedup%22]';
 
-                        $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata['hash'] . '&trackers=[' . $tracke_id . ']&from=2020-01-01%2000:00:00&to=2020-01-02%2023:59:59&events=[%22input_change%22,%20%22security_control%22,%20%22harsh_driving%22,%22speedup%22]';
-                        //dd($trackerlistUrl);
                         $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
-                        //dd($data['trackerlistData']);
-
                     } else {
                         $data['employeeData'] = array();
                         $data['trackerData'] = array();
@@ -315,7 +306,6 @@ class UserManagementController extends Controller
                         ->get();
                     $data['country'] = CountryModel::where('id', $user->addressCountry)->get()->toArray();
                     $data['licenseClass'] = LicenseClassModel::where('id', $user->driver_license_class)->get()->toArray();
-                    // dd($data);
                     return view('companies.users.view_user', $data);
                 }
             } else {
@@ -332,7 +322,6 @@ class UserManagementController extends Controller
         $userId = $trackerData[0]['user_id'];
         $userId = $trackerData[0]['user_id'];
         $tracker_id = $trackerData[0]['tracker_id'];
-
         $data['userId'] = $trackerData[0]['user_id'];
         $user = User::find($trackerData[0]['user_id']);
         return view('companies.users.testVeiw')->with(array('userId' => $userId, 'assets_id' => $id, 'userName' => $user['name']));
@@ -344,15 +333,11 @@ class UserManagementController extends Controller
         $userId = $trackerData[0]['user_id'];
         $tracker_id = $trackerData[0]['tracker_id'];
         $assets_id = $trackerData[0]['assets_id'];
-
         $user = User::find($trackerData[0]['user_id']);
         if (!empty($trackerData)) {
             $permissionList = UserDetailsAccessModel::select('assets_id')->where('assets_id', $assets_id)->get()->toArray();
-            // dd($permissionList);
             $user = User::find($trackerData[0]['user_id']);
-
             if ($user) {
-
                 $login = 'user/auth?login=' . $user->ontrac_username . '&password=' . Crypt::decrypt($user->ontrac_password);
                 $userData = $userService->callAPI($login);
                 if ($userData['success'] == 'true') {
@@ -366,7 +351,6 @@ class UserManagementController extends Controller
                     $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
                     $trackerData = $userService->callAPI($trackerListUrl);
                     $data = array();
-
                     foreach ($trackerData['list'] as $tracker) {
                         if ($tracker_id == $tracker['id']) {
                             array_push($data, $tracker);
@@ -374,22 +358,9 @@ class UserManagementController extends Controller
                             //  $data = array();
                         }
                     }
-                    //dd($data);
-                    // $filter = array_filter($data['trackerData']['list'], function ($Fdata) use ($permissionList) {
-                    //     return (array_filter($permissionList, function ($ldata) use ($Fdata) {
-                    //         return ($Fdata['id'] == $ldata['assets_id']) ? $Fdata : [];
-                    //     }));
-                    // });
-                    // if ($filter) {
-                    //     $data = $filter;
-                    // } else {
-                    //     $data = array();
-                    // }
                 } else {
                     $data = array();
                 }
-                //print_r($data);
-                // dd($data);
                 return Datatables::of($data)
                     ->addColumn('action', function ($data) use ($userId) {
                         return '<a href ="' . url('company/user-management/') . '/' . $data['id'] . '/' . $userId . '/reportShow"  class="btn btn-primary request_access edit"><i class="fa ti-eye" aria-hidden="true"></i>Veiw Report</a>';
@@ -407,7 +378,6 @@ class UserManagementController extends Controller
 
     public function getTrackersReport($id, $user_id)
     {
-        // echo $id."<br>".$user_id;die;
         return view('companies.users.testReport')->with(array('userId' => $user_id, 'trackerId' => $id));
     }
 
@@ -416,10 +386,16 @@ class UserManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
     public function getTrackersReportData($id, $user_id, $startData, $endDate, Request $request, UserService $userService)
     {
-        $accessData = UserDetailsAccessModel::where(array('company_id' => Auth::user()->id,'accept_status' => '1', 'user_id' => $user_id,))->get()->toArray();
+        $accessData = UserDetailsAccessModel::where(
+            array(
+                'company_id' => Auth::user()->id,
+                'accept_status' => '1',
+                'user_id' => $user_id,
+            ))
+            ->get()
+            ->toArray();
         if ($accessData) {
             // try {
             // Get Last Gps Point Data
@@ -441,7 +417,7 @@ class UserManagementController extends Controller
             // Get Tracker List Data
             $userData = User::find($user_id);
             $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
-             
+
             $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
             if (!empty($data['trackerlistData']['list'])) {
                 $data['trackerlistData'] = array_reverse($data['trackerlistData']['list']);
@@ -455,7 +431,6 @@ class UserManagementController extends Controller
             // Get Odometer Data
             $odometerUrl = "tracker/counter/read/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'] . "&type=odometer";
             $data['odometerData'] = $userService->getTrackerList($odometerUrl);
-            
             if ($data['odometerData']['success'] == true) {
                 $data['odometerData'] = $data['odometerData']['value']['multiplier'];
             } else {
@@ -470,20 +445,20 @@ class UserManagementController extends Controller
                 $sum += $mileageD[$currentData]['mileage'];
             }
             // Get User Access Details
-            $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from='.$currentData.'%2008:00:00&to='.$lastData.'%2023:59:59&events=["harsh_driving","speedup"]';
+            $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2008:00:00&to=' . $lastData . '%2023:59:59&events=["harsh_driving","speedup"]';
             // dd($harshUrl);
             $data['harshData'] = $userService->callAPI($harshUrl);
-            
+
             if ($data['harshData']['success'] == true) {
                 $harshD = array();
                 $harD = array();
                 foreach ($data['harshData']['list'] as $key => $harsh) {
                     if ($harsh['event'] = 'harsh_driving') {
-                       array_push($harshD, $harsh);
+                        array_push($harshD, $harsh);
                     }
                 }
             }
-           // dd($harshD);
+            // dd($harshD);
             $data['speeding'] = DB::table('speeding')
                 ->where(['company_id' => Auth::user()->id])
                 ->get();
@@ -509,9 +484,7 @@ class UserManagementController extends Controller
                 ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
                 ->where(['company_request_permission.users_detail_id' => $accessData[0]['id']])
                 ->get();
-           // dd($data['permissionData']);
-
-        
+            // dd($data['permissionData']);
 
             foreach ($data['permissionData'] as $key => $permission) {
                 //dd($permission);

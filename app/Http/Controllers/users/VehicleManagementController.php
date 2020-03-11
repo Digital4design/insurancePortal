@@ -28,7 +28,6 @@ class VehicleManagementController extends Controller
     public function index()
     {
         $data['roles'] = Role::get();
-        //dd($data['roles']);
         return view('users.vehicleManagement.index', $data);
     }
     public function driverData(Request $request, UserService $userService)
@@ -36,12 +35,51 @@ class VehicleManagementController extends Controller
         $sessiondata = $request->session()->all();
         $requestedUrl = 'vehicle/list/?hash=' . $sessiondata['hash'];
         $result = $userService->callAPI($requestedUrl);
-        // dd($result);
         foreach ($result['list'] as $key => $assets) {
             $data['assest'] = AssestModel::where('user_id', Auth::user()->id)->where('assets_id', $assets['id'])->get()->toArray();
             if (count($data['assest']) > 0) {
+                $assetsData = AssestModel::where('assets_id', $assets['id'])->first();
+                $assetData = AssestModel::find($assetsData['id']);
+                $assetData->tracker_id = $assets['tracker_id'];
+                $assetData->label = $assets['label'];
+                $assetData->max_speed = $assets['max_speed'];
+                $assetData->model = $assets['model'];
+                $assetData->type = $assets['type'];
+                if(isset($assets['subtype'])){
+                    $assetData->subtype = $assets['subtype'];
+                }else{
+                    $assetData->subtype = Null;
+                }
+                $assetData->garage_id = $assets['garage_id'];
+                $assetData->status_id = $assets['status_id'];
+                $assetData->trailer = $assets['trailer'];
+                $assetData->manufacture_year = $assets['manufacture_year'];
+                $assetData->color = $assets['color'];
+                $assetData->additional_info = $assets['additional_info'];
+                $assetData->reg_number = $assets['reg_number'];
+                $assetData->vin = $assets['vin'];
+                $assetData->frame_number = $assets['frame_number'];
+                $assetData->payload_weight = $assets['payload_weight'];
+                $assetData->payload_height = $assets['payload_height'];
+                $assetData->payload_length = $assets['payload_length'];
+                $assetData->payload_width = $assets['payload_width'];
+                $assetData->passengers = $assets['passengers'];
+                $assetData->gross_weight = $assets['gross_weight'];
+                $assetData->fuel_type = $assets['fuel_type'];
+                $assetData->fuel_grade = $assets['fuel_grade'];
+                $assetData->norm_avg_fuel_consumption = $assets['norm_avg_fuel_consumption'];
+                $assetData->fuel_tank_volume = $assets['fuel_tank_volume'];
+                $assetData->fuel_cost = $assets['fuel_cost'];
+                $assetData->wheel_arrangement = $assets['wheel_arrangement'];
+                $assetData->tyre_size = $assets['tyre_size'];
+                $assetData->tyres_number = $assets['tyres_number'];
+                $assetData->liability_insurance_policy_number = $assets['liability_insurance_policy_number'];
+                $assetData->liability_insurance_valid_till = $assets['liability_insurance_valid_till'];
+                $assetData->free_insurance_policy_number = $assets['free_insurance_policy_number'];
+                $assetData->free_insurance_valid_till = $assets['free_insurance_valid_till'];
+                $assetData->save();
             } else {
-                $userData = AssestModel::create([ 
+                $userData = AssestModel::create([
                     'user_id' => Auth::user()->id,
                     'assets_id' => $assets['id'],
                     'tracker_id' => $assets['tracker_id'],
@@ -80,7 +118,6 @@ class VehicleManagementController extends Controller
                 ]);
             }
         }
-
         return $result = json_encode($result);
     }
     /**
@@ -186,7 +223,6 @@ class VehicleManagementController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      * @param  int  $id
@@ -197,10 +233,8 @@ class VehicleManagementController extends Controller
         $sessiondata = $request->session()->all();
         $requestUrl = "tracker/list?hash=" . $sessiondata['hash'];
         $data['trackerData'] = $userService->callAPI($requestUrl);
-
         $requestUrl = "vehicle/read/?vehicle_id=" . $id . "&hash=" . $sessiondata['hash'];
         $userData = $userService->callAPI($requestUrl);
-
         $data['userData'] = $userData;
         $data['vehicleData'] = VehicleModel::get();
         $data['fuelData'] = FuelModel::get();
@@ -230,13 +264,11 @@ class VehicleManagementController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
         try {
             if ($request->tracker_id === 'nullTracker') {$tracker_id = 'null';} else { $tracker_id = $request->tracker_id;}
             $sessiondata = $request->session()->all();
             $requestUrl = "vehicle/read/?vehicle_id=" . $id . "&hash=" . $sessiondata['hash'];
             $userData = $userService->callAPI($requestUrl);
-
             $newVehicleData = '{
                 "id": ' . $id . ',
                 "tracker_id":' . $tracker_id . ',
@@ -294,7 +326,6 @@ class VehicleManagementController extends Controller
             return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
         }
     }
-
     /**
      * Remove the specified resource from storage.
      * @param  int  $id

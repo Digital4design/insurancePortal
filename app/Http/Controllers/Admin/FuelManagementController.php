@@ -17,7 +17,6 @@ class FuelManagementController extends Controller
      * Create a new controller instance.
      * @return void
      */
-
     public function __construct()
     {
         $this->middleware(['auth', 'admin']);
@@ -65,7 +64,7 @@ class FuelManagementController extends Controller
         }
         try {
             $userData = FuelModel::create([
-                'fuels_type' => lcfirst($request->fuels_type),
+                'fuels_type' => strtolower($request->fuels_type),
                 'fuels_description' => $request->fuels_description,
             ]);
             return redirect('/admin/fuel-type-management')->with(['status' => 'success', 'message' => 'New Vehicle Successfully created!']);
@@ -125,7 +124,7 @@ class FuelManagementController extends Controller
         try {
             $vehicleData = FuelModel::find(\Crypt::decrypt($id));
             $updateData = array(
-                "fuels_type" => $request->has('fuels_type') ? lcfirst($request->fuels_type) : "",
+                "fuels_type" => $request->has('fuels_type') ? strtolower($request->fuels_type) : "",
                 "fuels_description" => $request->has('fuels_description') ? $request->fuels_description : "",
             );
             $vehicleData->update($updateData);

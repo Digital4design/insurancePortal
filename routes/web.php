@@ -238,7 +238,6 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
     | Driver Management Routes Here        |
     |---------------------------------------
      */
-
     Route::group(['prefix' => 'assets-management'], function () {
         Route::get('/', 'users\VehicleManagementController@index');
         Route::get('driver-data', 'users\VehicleManagementController@driverData');
@@ -260,7 +259,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
     Route::post('/profile-edit', 'companies\DashboardController@userProfileUpdate')->name('profile-edit');
     /*
     |---------------------------------
-    | User Management Routes Here     |
+    | User Management Routes Here    | 
     |---------------------------------
      */
     Route::group(['prefix' => 'user-management'], function () {
@@ -271,7 +270,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::get('{id}/edit', 'companies\UserManagementController@edit');
         Route::get('{id}/access', 'companies\UserManagementController@accessPermission');
         Route::get('{id}/show', 'companies\UserManagementController@testShow');
-        Route::get('{id}/view', 'companies\UserManagementController@show');
+        Route::get('{id}/view', 'companies\UserManagementController@show'); 
 
         Route::post('{id}/update', 'companies\UserManagementController@update');
         Route::get('delete/{id}', 'companies\UserManagementController@destroy');
@@ -294,7 +293,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
     });
     /*
     |-------------------------------------
-    | Company Management Routes Here |
+    | Company Management Routes Here     |
     |-------------------------------------
      */
     Route::group(['prefix' => 'insurance-company-management'], function () {
