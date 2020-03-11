@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\VehicleModel;
 use App\Services\UserService;
 use Auth;
+use DB;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -34,9 +35,19 @@ class VehicleManagementController extends Controller
     {
         $sessiondata = $request->session()->all();
         $requestedUrl = 'vehicle/list/?hash=' . $sessiondata['hash'];
-        $result = $userService->callAPI($requestedUrl);
-        foreach ($result['list'] as $key => $assets) {
-            $data['assest'] = AssestModel::where('user_id', Auth::user()->id)->where('assets_id', $assets['id'])->get()->toArray();
+        $vehicleData = $userService->callAPI($requestedUrl);
+        foreach ($vehicleData['list'] as $key => $assets) {
+            $data['assest'] = AssestModel::where('user_id', Auth::user()->id)
+                ->where('assets_id', $assets['id'])
+                ->get()
+                ->toArray();
+            $assestData = AssestModel::where('user_id', Auth::user()->id)->get()->toArray();
+            foreach ($assestData as $key => $assestValue) {
+                if ($assestValue['assets_id'] == $assets['id']) {
+                } else {
+                    DB::table('assets')->where('assets_id', $assestValue['assets_id'])->delete();
+                }
+            }
             if (count($data['assest']) > 0) {
                 $assetsData = AssestModel::where('assets_id', $assets['id'])->first();
                 $assetData = AssestModel::find($assetsData['id']);
@@ -45,10 +56,10 @@ class VehicleManagementController extends Controller
                 $assetData->max_speed = $assets['max_speed'];
                 $assetData->model = $assets['model'];
                 $assetData->type = $assets['type'];
-                if(isset($assets['subtype'])){
+                if (isset($assets['subtype'])) {
                     $assetData->subtype = $assets['subtype'];
-                }else{
-                    $assetData->subtype = Null;
+                } else {
+                    $assetData->subtype = null;
                 }
                 $assetData->garage_id = $assets['garage_id'];
                 $assetData->status_id = $assets['status_id'];
@@ -118,7 +129,7 @@ class VehicleManagementController extends Controller
                 ]);
             }
         }
-        return $result = json_encode($result);
+        return $result = json_encode($vehicleData);
     }
     /**
      * Show the form for creating a new resource.
