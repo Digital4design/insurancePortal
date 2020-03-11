@@ -78,7 +78,6 @@ class CompanyManagementController extends Controller
             return $text;
         }
     }
-
     /**
      * Store a newly created resource in storage.
      * @param  \Illuminate\Http\Request  $request
@@ -109,7 +108,6 @@ class CompanyManagementController extends Controller
                 'role_id' => 2, // masjid user
             );
             UserRoleRelation::insert($roleArray);
-
             // Send Welcome email
             $user = User::where('id', $companyData->id)
                 ->first();
@@ -153,11 +151,7 @@ class CompanyManagementController extends Controller
     public function show($id)
     {
         $masjidData = User::find(\Crypt::decrypt($id));
-        return view('users.masjid.masjid_view')->with(
-            array(
-                'masjidData' => $masjidData,
-            )
-        );
+        return view('users.masjid.masjid_view')->with(array('masjidData' => $masjidData,));
     }
 
     /**
@@ -182,7 +176,6 @@ class CompanyManagementController extends Controller
             );
         }
     }
-
     /**
      * Update the specified resource in storage.
      * @param  \Illuminate\Http\Request  $request
@@ -196,7 +189,6 @@ class CompanyManagementController extends Controller
             'email' => 'required|min:2',
             'info' => 'required|min:2',
             'phone' => 'numeric|min:10',
-
         ));
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -217,7 +209,6 @@ class CompanyManagementController extends Controller
             return back()->with(array('status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.'));
         }
     }
-
     /**
      * Remove the specified resource from storage.
      * @param  \App\Models\Companies  $companies

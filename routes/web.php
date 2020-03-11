@@ -247,7 +247,6 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
         Route::get('{id}/edit', 'users\VehicleManagementController@edit');
         Route::post('{id}/update', 'users\VehicleManagementController@update');
         Route::get('delete/{id}', 'users\VehicleManagementController@destroy');
-
         Route::get('/get-country-name/{id}', 'users\VehicleManagementController@getCountryName');
     });
 

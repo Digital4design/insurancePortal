@@ -160,9 +160,7 @@ class AccessRequestController extends Controller
                     $companyData->notify(new UsersReaction($notificationData));
                 }
                 return redirect('/user/access-request-management')->with(['status' => 'success', 'message' => 'Permission Successfully created!']);
-
             }
-
             if ($request->tracker_id) {
                 DB::table('company_request_permission')
                     ->where('users_detail_id', $request->requestUserId)
@@ -171,18 +169,6 @@ class AccessRequestController extends Controller
                     DB::table('company_request_permission')
                         ->where('id', $permissionId)
                         ->update(array('accept_status' => '1'));
-                }
-                foreach ($request->tracker_id as $tracker_id) {
-                    $permissionArray = $request->permission[$tracker_id];
-                    foreach ($permissionArray as $key => $perm) {
-                        DB::table('permission_list')->insert(array(
-                            'access_id' => $request->requestUserId,
-                            'tracker_id' => $tracker_id,
-                            'permission_id' => $perm,
-                            'created_at' => date('Y-m-d H:i:s'),
-                            'updated_at' => date('Y-m-d H:i:s'),
-                        ));
-                    }
                 }
                 if ($request->tracker_id) {
                     DB::table('users_details_access')
@@ -240,35 +226,6 @@ class AccessRequestController extends Controller
         }
     }
     /**
-     * Accept request .
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function requestAccept11($id)
-    {
-        try {
-            $accessDetails = UserDetailsAccessModel::where('id', \Crypt::decrypt($id))
-                ->first();
-            if ($accessDetails) {
-                $updateData = array("accept_status" => '1', "updated_at" => date('Y-m-d H:i:s'));
-                $accessDetails->update($updateData);
-                $user = User::where('id', Auth::user()->id)->first();
-                $userData = User::where('id', $accessDetails->company_id)->first();
-                if ($user) {
-                    $notificationData = array(
-                        'username' => $user->name,
-                        'message' => ucfirst($user->name) . ' accept your request.',
-                        'useremail' => $user->email,
-                    );
-                    $userData->notify(new UsersReaction($notificationData));
-                }
-                return redirect('/user/access-request-management')->with(array('status' => 'success', 'message' => 'Request accepted Successfully!'));
-            }
-        } catch (\Exception $e) {
-            return back()->with(array('status' => 'danger', 'message' => $e->getMessage()));
-        }
-    }
-    /**
      * Reject request .
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -284,7 +241,6 @@ class AccessRequestController extends Controller
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
-                DB::table('permission_list')->where('access_id', \Crypt::decrypt($id))->delete();
                 $user = User::where('id', Auth::user()->id)->first();
                 $userData = User::where('id', $accessDetails->company_id)->first();
                 if ($user) {
@@ -319,7 +275,6 @@ class AccessRequestController extends Controller
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
-                DB::table('permission_list')->where('access_id', \Crypt::decrypt($id))->delete();
                 $user = User::where('id', Auth::user()->id)->first();
                 $userData = User::where('id', $accessDetails->company_id)->first();
                 if ($user) {
