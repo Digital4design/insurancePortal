@@ -9,7 +9,6 @@ use App\Models\Role;
 use App\Models\VehicleModel;
 use App\Services\UserService;
 use Auth;
-use DB;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -36,18 +35,19 @@ class VehicleManagementController extends Controller
         $sessiondata = $request->session()->all();
         $requestedUrl = 'vehicle/list/?hash=' . $sessiondata['hash'];
         $vehicleData = $userService->callAPI($requestedUrl);
+        $assestData = AssestModel::where('user_id', Auth::user()->id)->get()->toArray();
+        $arr = array();
+        foreach ($assestData as $key => $assestValue) {
+            $arr[] = $assestValue['assets_id'];
+        }
+        $arr2 = array();
         foreach ($vehicleData['list'] as $key => $assets) {
             $data['assest'] = AssestModel::where('user_id', Auth::user()->id)
                 ->where('assets_id', $assets['id'])
                 ->get()
                 ->toArray();
-            $assestData = AssestModel::where('user_id', Auth::user()->id)->get()->toArray();
-            foreach ($assestData as $key => $assestValue) {
-                if ($assestValue['assets_id'] == $assets['id']) {
-                } else {
-                    DB::table('assets')->where('assets_id', $assestValue['assets_id'])->delete();
-                }
-            }
+            $arr2[] = $assets['id'];
+
             if (count($data['assest']) > 0) {
                 $assetsData = AssestModel::where('assets_id', $assets['id'])->first();
                 $assetData = AssestModel::find($assetsData['id']);
@@ -129,6 +129,11 @@ class VehicleManagementController extends Controller
                 ]);
             }
         }
+        $diffArray = array_diff($arr, $arr2);
+        if(!empty($diffArray)){
+            DB::table('assets')->whereIn('assets_id', $diffArray)->delete();
+        }
+        
         return $result = json_encode($vehicleData);
     }
     /**
