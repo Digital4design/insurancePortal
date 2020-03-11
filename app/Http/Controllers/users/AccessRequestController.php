@@ -28,9 +28,6 @@ class AccessRequestController extends Controller
     }
     public function index(Request $request, UserService $userService)
     {
-
-        // dd($result);
-
         $data = array();
         $data['permissionPolicy'] = PermissionPolicyHolderModel::get();
         $login = 'user/auth?login=' . Auth::user()->ontrac_username . '&password=' . Crypt::decrypt(Auth::user()->ontrac_password);
@@ -50,10 +47,7 @@ class AccessRequestController extends Controller
         } else {
             $data['trackerData'] = array();
             //$data['permission'] = $result;
-
         }
-        //dd($data);
-
         return view('users.companyAccessRequest.index', $data);
     }
     public function requestData()
@@ -100,7 +94,6 @@ class AccessRequestController extends Controller
             ->get();
         $content = view('renders.multplePermissionRender')->with(['result' => $result, 'tr_id' => $tr_d])->render();
         return response()->json(['content' => $content]);
-
     }
     public function grantAccessToCompany($id, Request $request, UserService $userService)
     {
@@ -113,7 +106,6 @@ class AccessRequestController extends Controller
         //     ->get();
         $login = 'user/auth?login=' . Auth::user()->ontrac_username . '&password=' . Crypt::decrypt(Auth::user()->ontrac_password);
         $userData = $userService->callAPI($login);
-
         if ($userData['success'] == 'true') {
             if (isset($userData['hash'])) {
                 $hash = $userData['hash'];
@@ -125,43 +117,28 @@ class AccessRequestController extends Controller
             $trackerListUrl = "tracker/list?hash=" . $sessiondata['hash'];
             $data['trackerData'] = $userService->callAPI($trackerListUrl);
             $data['trackerData'] = $data['trackerData']['list'];
-
         } else {
             $data['trackerData'] = array();
         }
         $data['permissionData'] = $result;
         return view('users.companyAccessRequest.grantAccess', $data);
-
     }
     public function acceptRequest(Request $request)
     {
-        
         try {
             $detailsAccess = UserDetailsAccessModel::where('id', $request->requestUserId)->first();
-            
-
             $companyData = User::where('id', $detailsAccess->company_id)->first();
-            
-
             $authUserData = Auth::user();
             if ($request->permission) {
                 foreach ($request->permission as $tracker) {
-                   
-
                     DB::table('company_request_permission')
                         ->where('users_detail_id', $request->requestUserId)
-                        ->update(array(
-                            'accept_status' => '1',
-                            'updated_at' => date('Y-m-d H:i:s'),
-                        ));
+                        ->update(array('accept_status' => '1','updated_at' => date('Y-m-d H:i:s')));
                 }
-
                 DB::table('users_details_access')
                     ->where('id', $request->requestUserId)
                     ->update(array('accept_status' => '1'));
-
                 $permissionData = CompanyRequestPermissionModel::whereIn('id', $request->permission)->get()->toArray();
-
                 foreach ($permissionData as $key => $value) {
                     $perMissionId[] = $value['permission_policy_id'];
                 }
@@ -170,7 +147,18 @@ class AccessRequestController extends Controller
                     $perString[] = $value['permissions_name'];
                 }
                 $strPrer = implode(',', $perString);
-
+                $companyData = User::where('id', $detailsAccess->company_id)->first();
+                if ($companyData) {
+                    $notificationData = array(
+                        "subject" => "User give access permission",
+                        "username" => "User give access permission",
+                        "message" => ucfirst(Auth::user()->name) . " has given you access to " . $strPrer . " permissions for Vehicle " . Auth::user()->driver_license_id,
+                        "useremail" => Auth::user()->name,
+                        "companyName" => Auth::user()->name,
+                        "permission" => $strPrer,
+                    );
+                    $companyData->notify(new UsersReaction($notificationData));
+                }
                 return redirect('/user/access-request-management')->with(['status' => 'success', 'message' => 'Permission Successfully created!']);
 
             }
@@ -200,7 +188,8 @@ class AccessRequestController extends Controller
                     DB::table('users_details_access')
                         ->where('id', $request->requestUserId)
                         ->update(array('accept_status' => '1'));
-                    if ($request->tracker_id) {
+                    $companyData = User::where('id', $detailsAccess->company_id)->first();
+                    if ($companyData) {
                         $notificationData = array(
                             "subject" => "User give access permission",
                             "username" => "User give access permission",
@@ -215,6 +204,7 @@ class AccessRequestController extends Controller
                     DB::table('users_details_access')
                         ->where('id', $request->requestUserId)
                         ->update(array('accept_status' => '0'));
+                    $companyData = User::where('id', $detailsAccess->company_id)->first();
                     $notificationData = array(
                         "subject" => "User remove access permission",
                         "username" => "User remove access permission",
@@ -260,10 +250,7 @@ class AccessRequestController extends Controller
             $accessDetails = UserDetailsAccessModel::where('id', \Crypt::decrypt($id))
                 ->first();
             if ($accessDetails) {
-                $updateData = array(
-                    "accept_status" => '1',
-                    //"updated_at"        => date('Y-m-d H:i:s')
-                );
+                $updateData = array("accept_status" => '1', "updated_at" => date('Y-m-d H:i:s'));
                 $accessDetails->update($updateData);
                 $user = User::where('id', Auth::user()->id)->first();
                 $userData = User::where('id', $accessDetails->company_id)->first();
@@ -291,17 +278,9 @@ class AccessRequestController extends Controller
         try {
             $accessDetails = UserDetailsAccessModel::where('id', \Crypt::decrypt($id))->first();
             if ($accessDetails) {
-                $updateData = array(
-                    "accept_status" => '2',
-                    //"updated_at"        => date('Y-m-d H:i:s')
-
-                );
+                $updateData = array("accept_status" => '2', "updated_at" => date('Y-m-d H:i:s'));
                 $accessDetails->update($updateData);
-                $permissionData = array(
-                    "accept_status" => '2',
-                    //"updated_at"        => date('Y-m-d H:i:s')
-
-                );
+                $permissionData = array("accept_status" => '2', "updated_at" => date('Y-m-d H:i:s'));
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
@@ -334,17 +313,9 @@ class AccessRequestController extends Controller
         try {
             $accessDetails = UserDetailsAccessModel::where('id', \Crypt::decrypt($id))->first();
             if ($accessDetails) {
-                $updateData = array(
-                    "accept_status" => '2',
-                    //"updated_at"        => date('Y-m-d H:i:s')
-
-                );
+                $updateData = array("accept_status" => '2', "updated_at" => date('Y-m-d H:i:s'));
                 $accessDetails->update($updateData);
-                $permissionData = array(
-                    "accept_status" => '2',
-                    //"updated_at"        => date('Y-m-d H:i:s')
-
-                );
+                $permissionData = array("accept_status" => '2', "updated_at" => date('Y-m-d H:i:s'));
                 DB::table('company_request_permission')
                     ->where('users_detail_id', \Crypt::decrypt($id))
                     ->update($permissionData);
@@ -354,7 +325,7 @@ class AccessRequestController extends Controller
                 if ($user) {
                     $notificationData = array(
                         'username' => $user->name,
-                        'message' => ucfirst($user->name) . " withdrow all permissionsfor Vehicle" . Auth::user()->driver_license_id,
+                        'message' => ucfirst($user->name) . " withdrow all permissions for Vehicle " . Auth::user()->driver_license_id,
                         'useremail' => $user->email,
                         'userPassword' => '',
                         "permission" => "removePermission",
