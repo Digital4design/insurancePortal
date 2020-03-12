@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Yajra\Datatables\Datatables;
-use Illuminate\Http\Request;
 use App\Models\FuelModel;
 use App\Models\Role;
-use Validator;
 use Crypt;
-
+use Illuminate\Http\Request;
+use Validator;
+use Yajra\Datatables\Datatables;
 
 class FuelManagementController extends Controller
 {
@@ -34,10 +33,10 @@ class FuelManagementController extends Controller
     {
         $result = FuelModel::get();
         return Datatables::of($result)
-        ->addColumn('action', function ($result) {
-            return '<a href ="' . url('admin/fuel-type-management') . '/' . Crypt::encrypt($result->id) . '/edit"  class="btn btn-xs btn-primary edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
+            ->addColumn('action', function ($result) {
+                return '<a href ="' . url('admin/fuel-type-management') . '/' . Crypt::encrypt($result->id) . '/edit"  class="btn btn-xs btn-primary edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
             <a data-id =' . Crypt::encrypt($result->id) . ' class="btn btn-xs btn-danger delete" style="color:#fff"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>';
-        })->rawColumns(['action'])->make(true);
+            })->rawColumns(['action'])->make(true);
     }
     /**
      * Show the form for creating a new resource.
@@ -69,7 +68,7 @@ class FuelManagementController extends Controller
             ]);
             return redirect('/admin/fuel-type-management')->with(['status' => 'success', 'message' => 'New Vehicle Successfully created!']);
         } catch (\Exception $e) {
-            return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
+            // return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
             return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
         }
     }
@@ -99,7 +98,6 @@ class FuelManagementController extends Controller
             return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
         }
     }
-
     /**
      * Update the specified resource in storage.
      * @param  \Illuminate\Http\Request  $request

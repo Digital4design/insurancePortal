@@ -9,6 +9,7 @@ use App\Models\CountryModel;
 use App\Models\LicenseClassModel;
 use App\Models\PermissionPolicyHolderModel;
 use App\Models\Role;
+use App\Models\SpeedModel;
 use App\Models\UserDetailsAccessModel;
 use App\Models\UserRoleRelation;
 use App\Notifications\Company\accessPermission;
@@ -53,6 +54,7 @@ class UserManagementController extends Controller
     public function userData()
     {
         $result = AssestModel::where('tracker_id', '!=', '')->get();
+        // dd($result);
         return Datatables::of($result)
             ->addColumn('action', function ($result) {
                 return '<button type="button" class="btn btn-primary request_access" data-id=' . $result->id . '   data-toggle="modal"  data-target="#permissionModal"> Request Access</button>
@@ -289,7 +291,7 @@ class UserManagementController extends Controller
                         $requestUrl = "employee/list?hash=" . $sessiondata['hash'];
                         $data['employeeData'] = $userService->callAPI($requestUrl);
                         $data['employeeData'] = $data['employeeData']['list'];
-                        $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata['hash'] . '&trackers=[' . $tracke_id . ']&from='.date("Y-m-d").'%2000:00:00&to='.date("Y-m-d").'%2023:59:59&events=[%22input_change%22,%20%22security_control%22,%20%22harsh_driving%22,%22speedup%22]';
+                        $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata['hash'] . '&trackers=[' . $tracke_id . ']&from=' . date("Y-m-d") . '%2000:00:00&to=' . date("Y-m-d") . '%2023:59:59&events=[%22input_change%22,%20%22security_control%22,%20%22harsh_driving%22,%22speedup%22]';
 
                         $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
                     } else {
@@ -315,21 +317,29 @@ class UserManagementController extends Controller
             return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
         }
     }
-
     public function testShow($id, Request $request, UserService $userService)
     {
         $trackerData = AssestModel::where('tracker_id', '!=', '')->where('id', $id)->get()->toArray();
-        $userId = $trackerData[0]['user_id'];
+        $assets_id = $trackerData[0]['assets_id'];
+        $accessData = UserDetailsAccessModel::where('assets_id', $assets_id)
+            ->where('accept_status', '1')
+            ->where('company_id', Auth::user()->id)
+            ->get()
+            ->toArray();
         $userId = $trackerData[0]['user_id'];
         $tracker_id = $trackerData[0]['tracker_id'];
         $data['userId'] = $trackerData[0]['user_id'];
         $user = User::find($trackerData[0]['user_id']);
-        return view('companies.users.testVeiw')->with(array('userId' => $userId, 'assets_id' => $id, 'userName' => $user['name']));
+        //dd($accessData);
+        if (!empty($accessData)) {
+            return view('companies.users.testVeiw')->with(array('userId' => $userId, 'assets_id' => $id, 'userName' => $user['name']));
+        } else {
+            return redirect('/company/user-management')->with(['status' => 'danger', 'message' => 'You have no permission']);
+        }
     }
     public function getTrackers($id, Request $request, UserService $userService)
     {
         $trackerData = AssestModel::where('tracker_id', '!=', '')->where('id', $id)->get()->toArray();
-
         $userId = $trackerData[0]['user_id'];
         $tracker_id = $trackerData[0]['tracker_id'];
         $assets_id = $trackerData[0]['assets_id'];
@@ -388,154 +398,153 @@ class UserManagementController extends Controller
      */
     public function getTrackersReportData($id, $user_id, $startData, $endDate, Request $request, UserService $userService)
     {
-        $accessData = UserDetailsAccessModel::where(
-            array(
-                'company_id' => Auth::user()->id,
-                'accept_status' => '1',
-                'user_id' => $user_id,
-            ))
-            ->get()
-            ->toArray();
-        if ($accessData) {
-            // try {
-            // Get Last Gps Point Data
-            $sessiondata = $request->session()->all();
-            $currentData = $startData;
-            $lastData = $endDate;
-            $lastGpsPointUrl = "tracker/get_last_gps_point/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
-            $data['lastGpsPointData'] = $userService->callAPI($lastGpsPointUrl);
-            $data['lastGpsPointData'] = $data['lastGpsPointData']['value'];
-            // Get State Data
+        $speedData = SpeedModel::where(array('company_id' => Auth::user()->id))->get()->toArray();
 
-            $getStateUrl = "tracker/get_state/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
-            $data['getStateData'] = $userService->callAPI($getStateUrl);
-            $data['getStateData'] = $data['getStateData']['state'];
+        if (!empty($speedData)) {
+            $accessData = UserDetailsAccessModel::where(array('company_id' => Auth::user()->id, 'accept_status' => '1', 'user_id' => $user_id))->get()->toArray();
+            if ($accessData) {
+                // try {
+                // Get Last Gps Point Data
+                $sessiondata = $request->session()->all();
+                $currentData = $startData;
+                $lastData = $endDate;
+                $lastGpsPointUrl = "tracker/get_last_gps_point/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
+                $data['lastGpsPointData'] = $userService->callAPI($lastGpsPointUrl);
+                $data['lastGpsPointData'] = $data['lastGpsPointData']['value'];
+                // Get State Data
 
-            // Get Readings Data
-            $readingsUrl = "tracker/readings/list/?hash=" . $sessiondata['hash'] . "&tracker_id=" . $id;
-            $data['getReadingsData'] = $userService->callAPI($readingsUrl);
-            // Get Tracker List Data
-            $userData = User::find($user_id);
-            $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
+                $getStateUrl = "tracker/get_state/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
+                $data['getStateData'] = $userService->callAPI($getStateUrl);
+                $data['getStateData'] = $data['getStateData']['state'];
 
-            $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
-            if (!empty($data['trackerlistData']['list'])) {
-                $data['trackerlistData'] = array_reverse($data['trackerlistData']['list']);
-                $data['trackerlistData'] = $data['trackerlistData'][0];
-                $lat = $data['trackerlistData']['location']['lat'];
-                $log = $data['trackerlistData']['location']['lng'];
-                $location = $lat . ',' . $log;
-            } else {
-                $location = '';
-            }
-            // Get Odometer Data
-            $odometerUrl = "tracker/counter/read/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'] . "&type=odometer";
-            $data['odometerData'] = $userService->getTrackerList($odometerUrl);
-            if ($data['odometerData']['success'] == true) {
-                $data['odometerData'] = $data['odometerData']['value']['multiplier'];
-            } else {
-                $data['odometerData'] = 0;
-            }
-            $dateArray = $this->getDatesFromRange($currentData, $lastData, $format = 'Y-m-d');
-            // Get Mileage Data
-            $requestUrl = "tracker/stats/mileage/read/?hash=" . $sessiondata['hash'] . "&trackers=[" . $id . "]&from=" . $currentData . "%2000:00:00&to=" . $lastData . "%2023:59:59";
-            $data['mileageData'] = $userService->callAPI($requestUrl);
-            $sum = 0;
-            foreach ($data['mileageData']['result'] as $key => $mileageD) {
-                $sum += $mileageD[$currentData]['mileage'];
-            }
-            // Get User Access Details
-            $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2008:00:00&to=' . $lastData . '%2023:59:59&events=["harsh_driving","speedup"]';
-            // dd($harshUrl);
-            $data['harshData'] = $userService->callAPI($harshUrl);
+                // Get Readings Data
+                $readingsUrl = "tracker/readings/list/?hash=" . $sessiondata['hash'] . "&tracker_id=" . $id;
+                $data['getReadingsData'] = $userService->callAPI($readingsUrl);
+                // Get Tracker List Data
+                $userData = User::find($user_id);
+                $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
 
-            if ($data['harshData']['success'] == true) {
-                $harshD = array();
-                $harD = array();
-                foreach ($data['harshData']['list'] as $key => $harsh) {
-                    if ($harsh['event'] = 'harsh_driving') {
-                        array_push($harshD, $harsh);
+                $data['trackerlistData'] = $userService->getTrackerList($trackerlistUrl);
+                if (!empty($data['trackerlistData']['list'])) {
+                    $data['trackerlistData'] = array_reverse($data['trackerlistData']['list']);
+                    $data['trackerlistData'] = $data['trackerlistData'][0];
+                    $lat = $data['trackerlistData']['location']['lat'];
+                    $log = $data['trackerlistData']['location']['lng'];
+                    $location = $lat . ',' . $log;
+                } else {
+                    $location = '';
+                }
+                // Get Odometer Data
+                $odometerUrl = "tracker/counter/read/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'] . "&type=odometer";
+                $data['odometerData'] = $userService->getTrackerList($odometerUrl);
+                if ($data['odometerData']['success'] == true) {
+                    $data['odometerData'] = $data['odometerData']['value']['multiplier'];
+                } else {
+                    $data['odometerData'] = 0;
+                }
+                $dateArray = $this->getDatesFromRange($currentData, $lastData, $format = 'Y-m-d');
+                // Get Mileage Data
+                $requestUrl = "tracker/stats/mileage/read/?hash=" . $sessiondata['hash'] . "&trackers=[" . $id . "]&from=" . $currentData . "%2000:00:00&to=" . $lastData . "%2023:59:59";
+                $data['mileageData'] = $userService->callAPI($requestUrl);
+                $sum = 0;
+                foreach ($data['mileageData']['result'] as $key => $mileageD) {
+                    $sum += $mileageD[$currentData]['mileage'];
+                }
+                // Get User Access Details
+                $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2008:00:00&to=' . $lastData . '%2023:59:59&events=["harsh_driving","speedup"]';
+                // dd($harshUrl);
+                $data['harshData'] = $userService->callAPI($harshUrl);
+
+                if ($data['harshData']['success'] == true) {
+                    $harshD = array();
+                    $harD = array();
+                    foreach ($data['harshData']['list'] as $key => $harsh) {
+                        if ($harsh['event'] = 'harsh_driving') {
+                            array_push($harshD, $harsh);
+                        }
                     }
                 }
-            }
-            // dd($harshD);
-            $data['speeding'] = DB::table('speeding')
-                ->where(['company_id' => Auth::user()->id])
-                ->get();
-            //dd($data['speeding']);
-
-            $count = count($harD);
-            // dd($count);
-            if ($count > 0) {
-                if ($count == 1) {
-                    $rating = '9';
-                } else if ($count == 5) {
-                    $rating = '5';
-                } else if ($count >= 10) {
-                    $rating = '0';
-                } else {
-                    $rating = $count;
-                }
-            } else {
-                $rating = '10';
-            }
-            $data['permissionData'] = DB::table('company_request_permission')
-                ->select('company_request_permission.*', 'permission_policy_holder.permissions_name')
-                ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
-                ->where(['company_request_permission.users_detail_id' => $accessData[0]['id']])
-                ->get();
-            // dd($data['permissionData']);
-
-            foreach ($data['permissionData'] as $key => $permission) {
-                //dd($permission);
-                if ($permission->permissions_name == "Location") {
-                    $location = $location;
-                    // if ($permission->accept_status == "1") {
-                    //     $location = $location;
-                    // } else {
-                    //     $location = $location;
-                    // }
-                } else if ($permission->permissions_name == "Odometer") {
-                    $odometerData = $data['odometerData'];
-                    // if ($permission->accept_status == "1") {
-                    //     $odometerData = $data['odometerData'];
-                    // } else {
-                    //     $odometerData = 'Odometer No Permission';
-                    // }
-                } else if ($permission->permissions_name == "Violations") {
-                    $retaing = $rating;
-                    // if ($permission->accept_status == "1") {
-                    //     $retaing = $rating;
-                    // } else {
-                    //     $retaing = $rating;
-                    // }
-                } else if ($permission->permissions_name == "Mileage") {
-                    $milage = $data['lastGpsPointData']['mileage'];
-                    if ($milage) {
-                        $milage = $milage;
+                $data['speeding'] = DB::table('speeding')
+                    ->where(['company_id' => Auth::user()->id])
+                    ->get();
+                $count = count($harD);
+                if ($count > 0) {
+                    if ($count == 1) {
+                        $rating = '9';
+                    } else if ($count == 5) {
+                        $rating = '5';
+                    } else if ($count >= 10) {
+                        $rating = '0';
                     } else {
-                        $milage = 'Mileage No Permission';
+                        $rating = $count;
                     }
                 } else {
-
+                    $rating = '10';
                 }
-            }
-            $result = array(
-                array(
+
+                $data['permissionData'] = DB::table('company_request_permission')
+                    ->select('company_request_permission.*', 'permission_policy_holder.permissions_name')
+                    ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
+                    ->where(['company_request_permission.users_detail_id' => $accessData[0]['id']])
+                    ->get();
+                // dd($data['permissionData']);
+
+                foreach ($data['permissionData'] as $key => $permission) {
+                    //dd($permission);
+                    if ($permission->permissions_name == "Location") {
+                        $location = $location;
+                        // if ($permission->accept_status == "1") {
+                        //     $location = $location;
+                        // } else {
+                        //     $location = $location;
+                        // }
+                    } else if ($permission->permissions_name == "Odometer") {
+                        $odometerData = $data['odometerData'];
+                        // if ($permission->accept_status == "1") {
+                        //     $odometerData = $data['odometerData'];
+                        // } else {
+                        //     $odometerData = 'Odometer No Permission';
+                        // }
+                    } else if ($permission->permissions_name == "Violations") {
+                        $retaing = $rating;
+                        // if ($permission->accept_status == "1") {
+                        //     $retaing = $rating;
+                        // } else {
+                        //     $retaing = $rating;
+                        // }
+                    } else if ($permission->permissions_name == "Mileage") {
+                        $milage = $data['lastGpsPointData']['mileage'];
+                        if ($milage) {
+                            $milage = $milage;
+                        } else {
+                            $milage = 'Mileage No Permission';
+                        }
+                    } else {
+
+                    }
+                }
+                $result = array(array(
                     'userData' => $userData['name'],
                     'mileage' => $milage,
                     'rating' => $retaing,
                     'mileageDa' => $sum,
                     'odometer' => $odometerData,
                 ),
-            );
+                );
+            } else {
+                $result = array();
+                $location = '';
+            }
+            return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
+                return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
+            })->make(true);
         } else {
             $result = array();
+            $location = '';
+            return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
+                return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
+            })->make(true);
         }
-        //dd($result);
-        return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
-            return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
-        })->make(true);
     }
 
     public function getTrackerData($id, $user_id, Request $request, UserService $userService)

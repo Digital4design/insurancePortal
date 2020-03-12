@@ -79,7 +79,7 @@
       ReportTable =$('#dataTable').DataTable({
          processing: true,
          serverSide: true,
-         lengthMenu: [10,20,50,100],
+         lengthMenu: [10,20,50,100], 
          order:[[1,'desc']],
          ajax:'{{ url("/company/user-management/get-tracker-report-data") }}'+'/'+trackerId+'/'+userId+'/'+startDate+'/'+endDate,
          columns: [

@@ -133,7 +133,7 @@ class AccessRequestController extends Controller
                 foreach ($request->permission as $tracker) {
                     DB::table('company_request_permission')
                         ->where('users_detail_id', $request->requestUserId)
-                        ->update(array('accept_status' => '1','updated_at' => date('Y-m-d H:i:s')));
+                        ->update(array('accept_status' => '1', 'updated_at' => date('Y-m-d H:i:s')));
                 }
                 DB::table('users_details_access')
                     ->where('id', $request->requestUserId)

@@ -201,10 +201,9 @@ Route::group(['prefix' => 'user', 'middleware' => ['users', 'auth']], function (
         Route::get('{id}/reject', 'users\AccessRequestController@requestReject');
         Route::get('{id}/withdraw', 'users\AccessRequestController@requestWithdraw');
         Route::get('getRequestedData/{id}', 'users\AccessRequestController@getRequestedData');
-        
+
         Route::get('getRequestedTrackerData/{id}/{tr_id}', 'users\AccessRequestController@getRequestedTrackerData');
 
-        
         Route::post('acceptRequest', 'users\AccessRequestController@acceptRequest');
         Route::get('create', 'users\AccessRequestController@create');
         Route::post('/save-masjid', 'users\AccessRequestController@store');
@@ -258,7 +257,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
     Route::post('/profile-edit', 'companies\DashboardController@userProfileUpdate')->name('profile-edit');
     /*
     |---------------------------------
-    | User Management Routes Here    | 
+    | User Management Routes Here    |
     |---------------------------------
      */
     Route::group(['prefix' => 'user-management'], function () {
@@ -269,7 +268,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::get('{id}/edit', 'companies\UserManagementController@edit');
         Route::get('{id}/access', 'companies\UserManagementController@accessPermission');
         Route::get('{id}/show', 'companies\UserManagementController@testShow');
-        Route::get('{id}/view', 'companies\UserManagementController@show'); 
+        Route::get('{id}/view', 'companies\UserManagementController@show');
 
         Route::post('{id}/update', 'companies\UserManagementController@update');
         Route::get('delete/{id}', 'companies\UserManagementController@destroy');

@@ -13,8 +13,8 @@ class AssestModel extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 
-        'assets_id', 
+        'user_id',
+        'assets_id',
         'tracker_id',
         'label',
         'max_speed',
