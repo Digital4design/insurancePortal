@@ -7,7 +7,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/home', function () {
+Route::get('/home', function () { 
     return view('welcome');
 });
 Auth::routes();
@@ -279,7 +279,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth']], funct
         Route::get('get-tracker-report-data/{id}/{user_id}/{startDate}/{endDate}', 'companies\UserManagementController@getTrackersReportData');
 
     });
-    Route::group(['prefix' => 'speed-management'], function () {
+    Route::group(['prefix' => 'speed-management'], function () { 
         Route::get('/', 'companies\SpeedingController@index');
         Route::get('speed-data', 'companies\SpeedingController@getSpeedData');
         Route::get('create', 'companies\SpeedingController@create');

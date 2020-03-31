@@ -10,7 +10,7 @@ use App\Models\LicenseClassModel;
 use App\Models\PermissionPolicyHolderModel;
 use App\Models\Role;
 use App\Models\SpeedModel;
-use App\Models\UserDetailsAccessModel;
+use App\Models\UserDetailsAccessModel; 
 use App\Models\UserRoleRelation;
 use App\Notifications\Company\accessPermission;
 use App\Notifications\Users\UserCreation;
@@ -420,6 +420,7 @@ class UserManagementController extends Controller
                 // Get Readings Data
                 $readingsUrl = "tracker/readings/list/?hash=" . $sessiondata['hash'] . "&tracker_id=" . $id;
                 $data['getReadingsData'] = $userService->callAPI($readingsUrl);
+
                 // Get Tracker List Data
                 $userData = User::find($user_id);
                 $trackerlistUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59';
@@ -455,49 +456,62 @@ class UserManagementController extends Controller
                 // dd($harshUrl);
                 $data['harshData'] = $userService->callAPI($harshUrl);
 
+                
+                $rating='--';
                 if ($data['harshData']['success'] == true) {
-                    $harshD = array();
-                    $harD = array();
+                    $speedHarsh = array();
                     foreach ($data['harshData']['list'] as $key => $harsh) {
-                        if ($harsh['event'] = 'harsh_driving') {
-                            array_push($harshD, $harsh);
+                        if ($harsh['event'] = 'speedup') {
+                            array_push($speedHarsh, $harsh);
                         }
                     }
-                }
-                $data['speeding'] = DB::table('speeding')
-                    ->where(['company_id' => Auth::user()->id])
-                    ->get();
-                $count = count($harD);
-                if ($count > 0) {
-                    if ($count == 1) {
-                        $rating = '9';
-                    } else if ($count == 5) {
-                        $rating = '5';
-                    } else if ($count >= 10) {
-                        $rating = '0';
-                    } else {
-                        $rating = $count;
+                    $speedupcount = count($speedHarsh);
+                    $speedUpRating =$this->getRatingData($speedupcount,'speedup');
+
+                    $harshDriving = array();
+                    foreach ($data['harshData']['list'] as $key => $harsh) {
+                        if ($harsh['event'] = 'harsh_driving') {
+                            array_push($harshDriving, $harsh);
+                        }
                     }
-                } else {
-                    $rating = '10';
+
+                    $speedupcount = count($harshDriving);
+                    $harshDrivingRating =$this->getRatingData($harshDriving,'harsh_driving');
+                    if($speedUpRating !=null || $harshDrivingRating !=null){
+                       $rating = $speedUpRating + $harshDrivingRating;
+                        $rating = ($rating >= 10 )? 10 : $rating;
+                    }
                 }
+                
+                
+
+                // $data['speeding'] = DB::table('speeding')
+                //                    ->where(['company_id' => Auth::user()->id])
+                //                    ->get();
+
+                // $speedupcount = count($speedHarsh);
+                // $harshDrivingcount = count($harshDriving);
+                
+                // $count = $harshDrivingcount + $speedupcount;
+
+
+
+                
 
                 $data['permissionData'] = DB::table('company_request_permission')
                     ->select('company_request_permission.*', 'permission_policy_holder.permissions_name')
                     ->join('permission_policy_holder', 'permission_policy_holder.id', '=', 'company_request_permission.permission_policy_id')
                     ->where(['company_request_permission.users_detail_id' => $accessData[0]['id']])
                     ->get();
-                // dd($data['permissionData']);
+                
+
+
 
                 foreach ($data['permissionData'] as $key => $permission) {
                     //dd($permission);
                     if ($permission->permissions_name == "Location") {
                         $location = $location;
-                        // if ($permission->accept_status == "1") {
-                        //     $location = $location;
-                        // } else {
-                        //     $location = $location;
-                        // }
+                        
                     } else if ($permission->permissions_name == "Odometer") {
                         $odometerData = $data['odometerData'];
                         // if ($permission->accept_status == "1") {
@@ -545,6 +559,55 @@ class UserManagementController extends Controller
                 return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
             })->make(true);
         }
+    }
+
+    /*
+    * Get rating data
+    */
+    public static function getRatingData($apiCount,$type){
+        if($type=='harsh_driving'){
+            $harshData =  DB::table('speeding')
+                    ->where(['company_id' => Auth::user()->id])
+                    ->where(['speedType' => 'harsh'])
+                    ->get();
+                }else{
+                    $harshData =  DB::table('speeding')
+                    ->where(['company_id' => Auth::user()->id])
+                    ->where(['speedType' => 'speed'])
+                    ->get();
+                }
+                // dd($harshData);
+                if(!empty($harshData)){
+                    $noData=0;
+                    foreach ($harshData as $key => $value) {
+                        if($apiCount ==$value->speedingValue)
+                        {
+                            return $value->costValue;
+                        }
+                        else
+                        {
+                             $noData++;
+                        }
+                    }
+                }
+
+                if($noData >0){
+                    return null;
+                }
+                /*if ($count > 0) {
+                        if ($count == 1) {
+                            $rating = '9';
+                        } else if ($count == 5) {
+                            $rating = '5';
+                        } else if ($count >= 10) {
+                            $rating = '0';
+                        } else {
+                            $rating = $count;
+                        }
+                    } else {
+                        $rating = '10';
+                    }
+         */
     }
 
     public function getTrackerData($id, $user_id, Request $request, UserService $userService)

@@ -24,45 +24,43 @@
                      <input type="hidden" name="user_id" value="{{ Auth::user()->id }}"/>
                      <div class="col-md-6">
                         <div class="form-group  @error('speedingValue') has-danger @enderror ">
-                           <label class="control-label">Speeding Value</label>
+                           <label class="control-label">Violation Count</label>
                            <select name="speedingValue" id="speedingValue" class="form-control">
                                     <option value="">Select Status speeding Value</option>
-                                    <option value="1-10">1-10</option>
-                                    <option value="1-9">1-9</option>
-                                    <option value="1-8">1-8</option>
-                                    <option value="1-7">1-7</option>
-                                    <option value="1-6">1-6</option>
-                                    <option value="1-5">1-5</option>
-                                    <option value="1-5">1-5</option>
+                                    @for ($i = 0; $i <= 10; $i++)
+                                       <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                    <!-- 
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option> 
+                                    -->
                                 </select>
-                           <!-- 
-                              <input
-                              type="text"
-                              class="form-control @error('speedingValue')
-                              form-control-danger @enderror "
-                              id="speedingValue"
-                              name="speedingValue"
-                              placeholder="Speeding Value"
-                              value="{{ old('speedingValue') }}"
-                              /> 
-                           -->
-                           @error('speedingValue')
-                           <small class="form-control-feedback">{{ $errors->first('speedingValue') }}</small>
-                           @enderror
+                                @error('speedingValue')
+                                 <small class="form-control-feedback">{{ $errors->first('speedingValue') }}</small>
+                                @enderror
                         </div>
                      </div>
                      <div class="col-md-6">
                         <div class="form-group  @error('costValue') has-danger @enderror ">
-                           <label class="control-label">Cost Value</label>
+                           <label class="control-label">Rating</label>
                            <input
                               type="text"
                               class="form-control @error('costValue')
                               form-control-danger @enderror"
                               id="costValue"
                               name="costValue"
-                              placeholder="Cost Value"
+                              placeholder="e.g: 8"
                               value="{{ old('costValue') }}"
-                              />
+                           />
                            @error('costValue')
                            <small class="form-control-feedback">{{ $errors->first('costValue') }}</small>
                            @enderror
@@ -70,9 +68,9 @@
                      </div>
                      <div class="col-md-6">
                         <div class="form-group  @error('speedType') has-danger @enderror">
-                           <label class="control-label">Speed Type</label>
+                           <label class="control-label">Violation Type</label>
                            <select id="tracker_id" class="form-control @error('speedType') has-danger @enderror" name="speedType">
-                              <option value="">Select Speed</option>
+                              <option value="">Select Violation Type</option>
                               <option value="speed">speed</option>
                               <option value="harsh">harsh</option>
                            </select>

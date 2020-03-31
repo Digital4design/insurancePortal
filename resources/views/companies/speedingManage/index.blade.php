@@ -1,5 +1,5 @@
 @extends('companies.master')
-@section('pageTitle','User Management')
+@section('pageTitle','Police Parameters Management')
 
 @section('content')
 
@@ -22,9 +22,9 @@
                 	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
-                                <th>Value</th>
-                                <th>Cost (Value)</th>
-                                <th>speedType</th>
+                                <th>Violations Count</th>
+                                <th>Rating</th>
+                                <th>Violation Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
