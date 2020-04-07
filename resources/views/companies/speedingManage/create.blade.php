@@ -1,5 +1,5 @@
 @extends('companies.master')
-@section('pageTitle','Create New Speed')
+@section('pageTitle','Create New Violation')
 @section('content')
 @section('pageCss')
 <style></style>
@@ -8,7 +8,7 @@
    <div class="col-lg-12">
       <div class="card card-outline-info">
          <div class="card-header">
-            <h4 class="m-b-0 text-white">Add New Speed</h4>
+            <h4 class="m-b-0 text-white">Add New Violation</h4>
          </div>
          <div class="card-body">
             @if(Session::has('status'))

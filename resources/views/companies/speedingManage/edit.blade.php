@@ -1,5 +1,5 @@
 @extends('companies.master')
-@section('pageTitle','Edit Speed')
+@section('pageTitle','Edit Violations')
 @section('content')
 @section('pageCss')
 <style></style>
@@ -11,7 +11,7 @@
 	<div class="col-lg-12">
 		<div class="card card-outline-info">
 			<div class="card-header">
-				<h4 class="m-b-0 text-white">Edit Speed</h4>
+				<h4 class="m-b-0 text-white">Edit Violation</h4>
 			</div>
 			<div class="card-body">
 					@if(Session::has('status'))
@@ -73,7 +73,7 @@
 									<div class="form-group  @error('speedType') has-danger @enderror ">
 										<label class="control-label">Violation Type</label>
 										<select id="tracker_id" class="form-control @error('speedType') form-control-danger @enderror"  name="speedType">
-                                            <option value="">Violation Type</option>
+                                            <option value="">Select Violation Type</option>
                                             <option value="speed" {{ ( $speedData->speedType == 'speed') ? 'selected' : '' }}>speed</option>
                                             <option value="harsh" {{ ( $speedData->speedType == 'harsh') ? 'selected' : '' }}>harsh</option>
                                         </select>

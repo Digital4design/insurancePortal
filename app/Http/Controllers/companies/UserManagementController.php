@@ -437,7 +437,9 @@ class UserManagementController extends Controller
                 }
                 // Get Odometer Data
                 $odometerUrl = "tracker/counter/read/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'] . "&type=odometer";
+                //dd($odometerUrl);
                 $data['odometerData'] = $userService->getTrackerList($odometerUrl);
+                // dd($data['odometerData']);
                 if ($data['odometerData']['success'] == true) {
                     $data['odometerData'] = $data['odometerData']['value']['multiplier'];
                 } else {
@@ -452,7 +454,7 @@ class UserManagementController extends Controller
                     $sum += $mileageD[$currentData]['mileage'];
                 }
                 // Get User Access Details
-                $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2008:00:00&to=' . $lastData . '%2023:59:59&events=["harsh_driving","speedup"]';
+                $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59&events=["harsh_driving","speedup"]';
                 // dd($harshUrl);
                 $data['harshData'] = $userService->callAPI($harshUrl);
 
