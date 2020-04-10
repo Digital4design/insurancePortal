@@ -38,9 +38,7 @@ class UserService
             ),
         ));
         $response = curl_exec($curl);
-        // dd($response);
-        // $now = now();
-        // logger("json_decode was at { $now }   response { $response } ");
+        
         return $response = json_decode($response, true); //because of true, it's in an array
     }
     public function user_info($requestURL)
@@ -105,7 +103,7 @@ class UserService
     {
         $API_URL = env('API_URL');
         $realUrl = $API_URL . $requestURL;
-        //dd($realUrl);
+        // dd($realUrl);
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $realUrl,
@@ -119,6 +117,21 @@ class UserService
         ));
         $response = curl_exec($curl);
         //dd($response);
-        return $response = json_decode($response, true);
+        return $response = json_decode($response, true); //because of true, it's in an array
+
+        // $curl = curl_init();
+        // curl_setopt_array($curl, array(
+        //     CURLOPT_URL => $realUrl,
+        //     CURLOPT_RETURNTRANSFER => true,
+        //     CURLOPT_TIMEOUT => 30,
+        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        //     CURLOPT_CUSTOMREQUEST => "GET",
+        //     CURLOPT_HTTPHEADER => array(
+        //         "cache-control: no-cache",
+        //     ),
+        // ));
+        // $response = curl_exec($curl);
+        // //dd($response);
+        // return $response = json_decode($response, true);
     }
 }

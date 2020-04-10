@@ -116,6 +116,7 @@ class SpeedingController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), array(
             'speedingValue' => 'required',
             'costValue' => 'required|numeric',
@@ -128,9 +129,9 @@ class SpeedingController extends Controller
         try {
             $speedData = SpeedModel::find(\Crypt::decrypt($id));
             $updateData = array(
-                "name" => $request->has('speedingValue') ? $request->speedingValue : "",
-                "email" => $request->has('costValue') ? $request->costValue : "",
-                "info" => $request->has('speedType') ? $request->speedType : "",
+                "speedingValue" => $request->has('speedingValue') ? $request->speedingValue : "",
+                "costValue" => $request->has('costValue') ? $request->costValue : "",
+                "speedType" => $request->has('speedType') ? $request->speedType : "",
             );
             $speedData->update($updateData);
             return redirect('/company/speed-management')->with(array('status' => 'success', 'message' => 'Update record successfully.'));

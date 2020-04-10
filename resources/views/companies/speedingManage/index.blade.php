@@ -9,16 +9,17 @@
 			<div class="card-body">
                 <h4 class="card-title">All Violations Listing</h4>
 				<h6 class="card-subtitle">Here you can manage Violations</h6>
-                <div class="right-side-struct pull-right">
-				    <a href="{{ url('/company/speed-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"><i class="fa fa-plus" aria-hidden="true"></i> Add New Violations parameter </a>
-				</div>
-                <div class="table-responsive m-t-40">
-                    @if(Session::has('status'))
+                @if(Session::has('status'))
 						<div class="alert alert-{{ Session::get('status') }}">
 							<i class="ti-user"></i> {{ Session::get('message') }}
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 						</div>
 					@endif
+                <div class="right-side-struct pull-right">
+				    <a href="{{ url('/company/speed-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"><i class="fa fa-plus" aria-hidden="true"></i> Add New Violations parameter </a>
+				</div>
+                <div class="table-responsive m-t-40">
+                    
                 	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
