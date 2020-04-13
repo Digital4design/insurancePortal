@@ -23,7 +23,9 @@
                 	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
-                                <th>Violations Count</th>
+                                <!-- <th>Speeding Start</th>
+                                <th>Speeding End</th> -->
+                                <th>Value</th>
                                 <th>Rating</th>
                                 <th>Violation Type</th>
                                 <th>Action</th>
@@ -53,12 +55,11 @@ $(function() {
         order: [[1,'desc']],
         ajax: '{!! url("/company/speed-management/speed-data") !!}',
         columns: [
-            { data: 'speedingValue',		name: 'speedingValue', orderable: true },
-            { data: 'costValue',		name: 'costValue', orderable: true },
+            //{ data: 'speeding_start',		name: 'speeding_start', orderable: true },
+            // { data: 'speeding_end',		name: 'speeding_end', orderable: true },
+            { data: 'range',		name: 'range', orderable: true },
+            { data: 'rating',		name: 'rating', orderable: true },
             { data: 'speedType',		name: 'speedType', orderable: true },
-			// { data: 'email',	name: 'email', orderable: true },
-            // { data: 'phone',	name: 'phone',	orderable: true, "visible":true },
-            // { data: 'created_at',	name: 'created_at',	orderable: true, "visible":true },
             { data: 'action', name: 'action', orderable: false,  },
         ],
         dom: 'Blfrptip',

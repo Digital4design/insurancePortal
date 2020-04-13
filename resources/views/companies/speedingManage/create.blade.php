@@ -23,46 +23,61 @@
                   <div class="row p-t-20">
                      <input type="hidden" name="user_id" value="{{ Auth::user()->id }}"/>
                      <div class="col-md-6">
-                        <div class="form-group  @error('speedingValue') has-danger @enderror ">
-                           <label class="control-label">Violation Count</label>
-                           <select name="speedingValue" id="speedingValue" class="form-control">
+                        <div class="form-group  @error('speeding_start') has-danger @enderror ">
+                           <label class="control-label">Speeding Start</label>
+                           <input
+                              type="text"
+                              class="form-control @error('speeding_start')
+                              form-control-danger @enderror"
+                              id="speeding_start"
+                              name="speeding_start"
+                              placeholder="Speeding Start"
+                              value="{{ old('speeding_start') }}"
+                           />
+                           <!-- <select name="speedingValue" id="speedingValue" class="form-control">
                                     <option value="">Select Status speeding Value</option>
                                     @for ($i = 0; $i <= 10; $i++)
                                        <option value="{{ $i }}">{{ $i }}</option>
                                     @endfor
-                                    <!-- 
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option> 
-                                    -->
-                                </select>
-                                @error('speedingValue')
-                                 <small class="form-control-feedback">{{ $errors->first('speedingValue') }}</small>
+                                   
+                                </select> -->
+                                @error('speeding_start')
+                                 <small class="form-control-feedback">{{ $errors->first('speeding_start') }}</small>
                                 @enderror
                         </div>
                      </div>
+
                      <div class="col-md-6">
-                        <div class="form-group  @error('costValue') has-danger @enderror ">
+                        <div class="form-group  @error('speeding_end') has-danger @enderror ">
+                           <label class="control-label">Speeding End</label>
+                           <input
+                              type="text"
+                              class="form-control @error('speeding_end')
+                              form-control-danger @enderror"
+                              id="speeding_end"
+                              name="speeding_end"
+                              placeholder="Speeding End"
+                              value="{{ old('speeding_end') }}"
+                           />
+                           @error('speeding_end')
+                           <small class="form-control-feedback">{{ $errors->first('speeding_end') }}</small>
+                           @enderror
+                        </div>
+                     </div>
+                     <div class="col-md-6">
+                        <div class="form-group  @error('rating') has-danger @enderror ">
                            <label class="control-label">Rating</label>
                            <input
                               type="text"
-                              class="form-control @error('costValue')
+                              class="form-control @error('rating')
                               form-control-danger @enderror"
-                              id="costValue"
-                              name="costValue"
+                              id="rating"
+                              name="rating"
                               placeholder="e.g: 8"
-                              value="{{ old('costValue') }}"
+                              value="{{ old('rating') }}"
                            />
-                           @error('costValue')
-                           <small class="form-control-feedback">{{ $errors->first('costValue') }}</small>
+                           @error('rating')
+                           <small class="form-control-feedback">{{ $errors->first('rating') }}</small>
                            @enderror
                         </div>
                      </div>

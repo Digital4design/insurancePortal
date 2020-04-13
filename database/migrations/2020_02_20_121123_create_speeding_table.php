@@ -16,8 +16,9 @@ class CreateSpeedingTable extends Migration
             $table->bigIncrements('id');
             $table->biginteger('company_id')->unsigned()->nullable();
             $table->foreign('company_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('speedingValue')->nullable();
-            $table->string('costValue')->nullable();
+            $table->string('speeding_start')->nullable();
+            $table->string('speeding_end')->nullable();
+            $table->string('rating')->nullable();
             $table->enum('speedType', ['speed', 'harsh'])->default('speed')->comment = 'speed / harsh';
             $table->timestamps();
         });

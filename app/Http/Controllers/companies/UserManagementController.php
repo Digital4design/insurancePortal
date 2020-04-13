@@ -424,7 +424,12 @@ class UserManagementController extends Controller
 
                 $getStateUrl = "tracker/get_state/?tracker_id=" . $id . "&hash=" . $sessiondata['hash'];
                 $data['getStateData'] = $userService->callAPI($getStateUrl);
+                // dd($data['getStateData']);
+                if (!empty($data['getStateData']['state'])  && $data['getStateData']['success']== true) {
                 $data['getStateData'] = $data['getStateData']['state'];
+                }else{
+                    $data['getStateData'] =array();
+                }
 
                 // Get Readings Data
                 $readingsUrl = "tracker/readings/list/?hash=" . $sessiondata['hash'] . "&tracker_id=" . $id;
@@ -486,12 +491,17 @@ class UserManagementController extends Controller
 
                 // Get User Access Details
                 $harshUrl = 'history/tracker/list?hash=' . $sessiondata["hash"] . '&trackers=[' . $id . ']&from=' . $currentData . '%2000:00:00&to=' . $lastData . '%2023:59:59&events=["harsh_driving","speedup"]';
+                // dd($harshUrl);
                 
                
                 $data['harshData'] = $userService->callAPI($harshUrl);
                 // dd($data['harshData']['list']);
                 
-                $rating='--';
+
+
+
+                /* speed up rating*/ 
+                $speedrating1='--';
                 if (!empty($data['harshData']['list']) && $data['harshData']['success'] == true) {
                     $speedHarsh = array();
                     foreach ($data['harshData']['list'] as $key => $harsh) {
@@ -501,10 +511,23 @@ class UserManagementController extends Controller
                     }
                     $speedupcount = count($speedHarsh);
                     
-                    //dd($speedupcount);
+                   dd($speedupcount);
+                   
+                   $speedUpRating =$this->getRatingData($speedupcount,'speedup');
+                   dd($speedUpRating);
+                    if($speedUpRating !=null ){
+                       $speedrating1 = $speedUpRating;
+                        // $speedrating1 = ($speedrating1 >= 10 )? 10 : $speedrating1;
+                    }
+                }
 
-                    $speedUpRating =$this->getRatingData($speedupcount,'speedup');
+              // dd($speedrating1);
 
+
+
+              
+                $harshrating='--';
+                if (!empty($data['harshData']['list']) && $data['harshData']['success'] == true) {
                     $harshDriving = array();
                     foreach ($data['harshData']['list'] as $key => $harsh) {
                         if ($harsh['event'] = 'harsh_driving') {
@@ -514,11 +537,15 @@ class UserManagementController extends Controller
 
                     $speedupcount = count($harshDriving);
                     $harshDrivingRating =$this->getRatingData($harshDriving,'harsh_driving');
-                    if($speedUpRating !=null || $harshDrivingRating !=null){
-                       $rating = $speedUpRating + $harshDrivingRating;
-                        $rating = ($rating >= 10 )? 10 : $rating;
+                    if($harshDrivingRating !=null){
+                       $harshrating = $harshDrivingRating;
+                       // $harshrating = ($harshrating >= 10 )? 10 : $harshrating;
                     }
                 }
+
+
+                // dd($harshrating);
+
 
                 //dd($speedupcount);
                 
@@ -543,14 +570,16 @@ class UserManagementController extends Controller
                         // } else {
                         //     $odometerData = 'Odometer No Permission';
                         // }
-                    } else if ($permission->permissions_name == "Violations") {
-                        $retaing = $rating;
-                        // if ($permission->accept_status == "1") {
-                        //     $retaing = $rating;
-                        // } else {
-                        //     $retaing = $rating;
-                        // }
-                    } else if ($permission->permissions_name == "Mileage") {
+                    } 
+                    // else if ($permission->permissions_name == "Violations") {
+                    //     $retaing = $rating;
+                    //     // if ($permission->accept_status == "1") {
+                    //     //     $retaing = $rating;
+                    //     // } else {
+                    //     //     $retaing = $rating;
+                    //     // }
+                    // } 
+                    else if ($permission->permissions_name == "Mileage") {
                         $milage = $data['lastGpsPointData']['mileage'];
                         if ($milage) {
                             $milage = $milage;
@@ -574,7 +603,8 @@ class UserManagementController extends Controller
                 $result = array(array(
                     'userData' => $userData['name'],
                     'mileage' => $milage,
-                    'rating' => $retaing,
+                    'harshrating'=>$harshrating,
+                    'speedrating' => $speedrating1,
                     'mileageDa' => $sum,
                     'odometer' => $odometerData,
                 ),
@@ -583,8 +613,8 @@ class UserManagementController extends Controller
                 $result = array();
                 $location = '';
             }
+            dd($result);
             return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
-
                 return '<a href="http://maps.google.com/?q=' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
                 return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
             })->make(true);
@@ -605,6 +635,7 @@ class UserManagementController extends Controller
     * Get rating data
     */
     public static function getRatingData($apiCount,$type){
+        
         if($type=='harsh_driving'){
             $harshData =  DB::table('speeding')
                     ->where(['company_id' => Auth::user()->id])
@@ -615,39 +646,38 @@ class UserManagementController extends Controller
                     ->where(['company_id' => Auth::user()->id])
                     ->where(['speedType' => 'speed'])
                     ->get();
+                   
                 }
-                // dd($harshData);
-                if(!empty($harshData)){
-                    $noData=0;
-                    foreach ($harshData as $key => $value) {
-                        if($apiCount ==$value->speedingValue)
-                        {
-                            return $value->costValue;
-                        }
-                        else
-                        {
-                             $noData++;
-                        }
-                    }
+        dd($harshData);
+        if(!empty($harshData)){
+            $noData=0;
+            foreach ($harshData as $key => $value) {
+                if($apiCount ==$value->speeding_start){
+                    return $value->rating;
                 }
-
-                if($noData >0){
-                    return null;
+                else
+                {
+                    $noData++;
                 }
-                /*if ($count > 0) {
-                        if ($count == 1) {
-                            $rating = '9';
-                        } else if ($count == 5) {
-                            $rating = '5';
-                        } else if ($count >= 10) {
-                            $rating = '0';
-                        } else {
-                            $rating = $count;
-                        }
-                    } else {
-                        $rating = '10';
-                    }
-         */
+            }
+        }
+        if($noData >0){
+            return null;
+        }
+        /*if ($count > 0) {
+            if ($count == 1) {
+                $rating = '9';
+            } else if ($count == 5) {
+                $rating = '5';
+            } else if ($count >= 10) {
+                 $rating = '0';
+            } else {
+                $rating = $count;
+            }
+        } else {
+            $rating = '10';
+        }
+        */
     }
 
     public function getTrackerData($id, $user_id, Request $request, UserService $userService)

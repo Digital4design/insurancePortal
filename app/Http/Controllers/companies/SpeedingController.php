@@ -26,10 +26,17 @@ class SpeedingController extends Controller
     public function getSpeedData()
     {
         $result = SpeedModel::where('company_id', Auth::user()->id)->get();
-        return Datatables::of($result)
-            ->addColumn('action', function ($result) {
-                return '<a href ="' . url('company/speed-management') . '/' . Crypt::encrypt($result->id) . '/edit"  class="btn btn-xs btn-warning edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
-                <a data-id =' . Crypt::encrypt($result->id) . ' class="btn btn-xs btn-danger delete" style="color:#fff"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>';
+
+        $resultDat= array();
+        foreach($result as $resultData){
+            $resultData['range']=$resultData['speeding_start']." - ".$resultData['speeding_end'];
+            array_push($resultDat,$resultData);
+        }
+        // dd($resultDat);
+        return Datatables::of($resultDat)
+            ->addColumn('action', function ($resultDat) {
+                return '<a href ="' . url('company/speed-management') . '/' . Crypt::encrypt($resultDat->id) . '/edit"  class="btn btn-xs btn-warning edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
+                <a data-id =' . Crypt::encrypt($resultDat->id) . ' class="btn btn-xs btn-danger delete" style="color:#fff"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>';
             })
             ->make(true);
     }
@@ -51,10 +58,11 @@ class SpeedingController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'speedingValue' => 'required',
-            'costValue' => 'required',
+            'speeding_start' => 'required',
+            'speeding_end' => 'required',
+            'rating' => 'required',
             'speedType' => 'required',
         ]);
         if ($validator->fails()) {
@@ -63,7 +71,9 @@ class SpeedingController extends Controller
         try {
             $speedData = DB::table('speeding')
                 ->where('speeding.company_id', Auth::user()->id)
-                ->where('speeding.costValue', $request->costValue)
+                ->where('speeding.speeding_start', $request->speeding_start)
+                ->where('speeding.speeding_end', $request->speeding_end)
+                ->where('speeding.rating', $request->rating)
                 ->where('speeding.speedType', $request->speedType)
                 ->get();
             if (count($speedData) > 0) {
@@ -71,8 +81,9 @@ class SpeedingController extends Controller
             } else {
                 $speedData = SpeedModel::create([
                     'company_id' => Auth::user()->id,
-                    'speedingValue' => $request->speedingValue,
-                    'costValue' => $request->costValue,
+                    'speeding_start' => $request->speeding_start,
+                    'speeding_end' => $request->speeding_end,
+                    'rating' => $request->rating,
                     'speedType' => $request->speedType,
                 ]);
                 return redirect('/company/speed-management')->with(['status' => 'success', 'message' => 'New ' . $request->speedType . ' Successfully created!']);
@@ -118,8 +129,9 @@ class SpeedingController extends Controller
     {
         // dd($request->all());
         $validator = Validator::make($request->all(), array(
-            'speedingValue' => 'required',
-            'costValue' => 'required|numeric',
+            'speeding_start' => 'required',
+            'speeding_end' => 'required',
+            'rating' => 'required|numeric',
             'speedType' => 'required',
 
         ));
@@ -129,8 +141,9 @@ class SpeedingController extends Controller
         try {
             $speedData = SpeedModel::find(\Crypt::decrypt($id));
             $updateData = array(
-                "speedingValue" => $request->has('speedingValue') ? $request->speedingValue : "",
-                "costValue" => $request->has('costValue') ? $request->costValue : "",
+                "speeding_start" => $request->has('speeding_start') ? $request->speeding_start : "",
+                "speeding_end" => $request->has('speeding_end') ? $request->speeding_end : "",
+                "rating" => $request->has('rating') ? $request->rating : "",
                 "speedType" => $request->has('speedType') ? $request->speedType : "",
             );
             $speedData->update($updateData);
