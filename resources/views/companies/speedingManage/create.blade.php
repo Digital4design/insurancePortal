@@ -1,5 +1,5 @@
 @extends('companies.master')
-@section('pageTitle','Create New Speed')
+@section('pageTitle','Create New Violation')
 @section('content')
 @section('pageCss')
 <style></style>
@@ -8,7 +8,7 @@
    <div class="col-lg-12">
       <div class="card card-outline-info">
          <div class="card-header">
-            <h4 class="m-b-0 text-white">Add New Speed</h4>
+            <h4 class="m-b-0 text-white">Add New Violation</h4>
          </div>
          <div class="card-body">
             @if(Session::has('status'))
@@ -23,56 +23,69 @@
                   <div class="row p-t-20">
                      <input type="hidden" name="user_id" value="{{ Auth::user()->id }}"/>
                      <div class="col-md-6">
-                        <div class="form-group  @error('speedingValue') has-danger @enderror ">
-                           <label class="control-label">Speeding Value</label>
-                           <select name="speedingValue" id="speedingValue" class="form-control">
-                                    <option value="">Select Status speeding Value</option>
-                                    <option value="1-10">1-10</option>
-                                    <option value="1-9">1-9</option>
-                                    <option value="1-8">1-8</option>
-                                    <option value="1-7">1-7</option>
-                                    <option value="1-6">1-6</option>
-                                    <option value="1-5">1-5</option>
-                                    <option value="1-5">1-5</option>
-                                </select>
-                           <!-- 
-                              <input
+                        <div class="form-group  @error('speeding_start') has-danger @enderror ">
+                           <label class="control-label">Speeding Start</label>
+                           <input
                               type="text"
-                              class="form-control @error('speedingValue')
-                              form-control-danger @enderror "
-                              id="speedingValue"
-                              name="speedingValue"
-                              placeholder="Speeding Value"
-                              value="{{ old('speedingValue') }}"
-                              /> 
-                           -->
-                           @error('speedingValue')
-                           <small class="form-control-feedback">{{ $errors->first('speedingValue') }}</small>
+                              class="form-control @error('speeding_start')
+                              form-control-danger @enderror"
+                              id="speeding_start"
+                              name="speeding_start"
+                              placeholder="Speeding Start"
+                              value="{{ old('speeding_start') }}"
+                           />
+                           <!-- <select name="speedingValue" id="speedingValue" class="form-control">
+                                    <option value="">Select Status speeding Value</option>
+                                    @for ($i = 0; $i <= 10; $i++)
+                                       <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                   
+                                </select> -->
+                                @error('speeding_start')
+                                 <small class="form-control-feedback">{{ $errors->first('speeding_start') }}</small>
+                                @enderror
+                        </div>
+                     </div>
+
+                     <div class="col-md-6">
+                        <div class="form-group  @error('speeding_end') has-danger @enderror ">
+                           <label class="control-label">Speeding End</label>
+                           <input
+                              type="text"
+                              class="form-control @error('speeding_end')
+                              form-control-danger @enderror"
+                              id="speeding_end"
+                              name="speeding_end"
+                              placeholder="Speeding End"
+                              value="{{ old('speeding_end') }}"
+                           />
+                           @error('speeding_end')
+                           <small class="form-control-feedback">{{ $errors->first('speeding_end') }}</small>
                            @enderror
                         </div>
                      </div>
                      <div class="col-md-6">
-                        <div class="form-group  @error('costValue') has-danger @enderror ">
-                           <label class="control-label">Cost Value</label>
+                        <div class="form-group  @error('rating') has-danger @enderror ">
+                           <label class="control-label">Rating</label>
                            <input
                               type="text"
-                              class="form-control @error('costValue')
+                              class="form-control @error('rating')
                               form-control-danger @enderror"
-                              id="costValue"
-                              name="costValue"
-                              placeholder="Cost Value"
-                              value="{{ old('costValue') }}"
-                              />
-                           @error('costValue')
-                           <small class="form-control-feedback">{{ $errors->first('costValue') }}</small>
+                              id="rating"
+                              name="rating"
+                              placeholder="e.g: 8"
+                              value="{{ old('rating') }}"
+                           />
+                           @error('rating')
+                           <small class="form-control-feedback">{{ $errors->first('rating') }}</small>
                            @enderror
                         </div>
                      </div>
                      <div class="col-md-6">
                         <div class="form-group  @error('speedType') has-danger @enderror">
-                           <label class="control-label">Speed Type</label>
+                           <label class="control-label">Violation Type</label>
                            <select id="tracker_id" class="form-control @error('speedType') has-danger @enderror" name="speedType">
-                              <option value="">Select Speed</option>
+                              <option value="">Select Violation Type</option>
                               <option value="speed">speed</option>
                               <option value="harsh">harsh</option>
                            </select>

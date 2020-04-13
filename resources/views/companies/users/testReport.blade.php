@@ -40,7 +40,8 @@
                         <thead>
                            <tr>
                               <th>Policy Holder</th>
-                              <th>Rating(1-10)</th>
+                              <th>Harsh Rating(1-10)</th>
+                              <th>Speedup Rating(1-10)</th>
                               <th>Odometer Reading (Km)</th>
                               <th>Total Mileage (Km)</th>
                               <th>Last Known GPS Location (Latitude, Longitude)</th>
@@ -84,6 +85,7 @@
          ajax:'{{ url("/company/user-management/get-tracker-report-data") }}'+'/'+trackerId+'/'+userId+'/'+startDate+'/'+endDate,
          columns: [
             { data:'userData',name: 'userData', orderable: true },
+            { data:'harshrating',name: 'harshrating', orderable: true },
             { data:'rating',name: 'rating', orderable: true },
             { data: 'odometer',name: 'odometer',orderable: true, "visible":true },
             { data: 'mileageDa',name: 'mileageDa',orderable: true, "visible":true },

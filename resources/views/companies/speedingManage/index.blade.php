@@ -1,5 +1,5 @@
 @extends('companies.master')
-@section('pageTitle','User Management')
+@section('pageTitle','Police Parameters Management')
 
 @section('content')
 
@@ -7,24 +7,27 @@
 	<div class="col-12">
 		<div class="card">
 			<div class="card-body">
-                <h4 class="card-title">All Speeding Listing</h4>
-				<h6 class="card-subtitle">Here you can manage Speeding</h6>
-                <div class="right-side-struct pull-right">
-				    <a href="{{ url('/company/speed-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"><i class="fa fa-plus" aria-hidden="true"></i> Add New Speed </a>
-				</div>
-                <div class="table-responsive m-t-40">
-                    @if(Session::has('status'))
+                <h4 class="card-title">All Violations Listing</h4>
+				<h6 class="card-subtitle">Here you can manage Violations</h6>
+                @if(Session::has('status'))
 						<div class="alert alert-{{ Session::get('status') }}">
 							<i class="ti-user"></i> {{ Session::get('message') }}
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 						</div>
 					@endif
+                <div class="right-side-struct pull-right">
+				    <a href="{{ url('/company/speed-management/create') }}" class="btn btn-info waves-effect waves-light clearfix add-new add-faicon"><i class="fa fa-plus" aria-hidden="true"></i> Add New Violations parameter </a>
+				</div>
+                <div class="table-responsive m-t-40">
+                    
                 	<table id="dataTable" class=" table table-striped table-bordered dataTable  ">
                         <thead>
                             <tr>
+                                <!-- <th>Speeding Start</th>
+                                <th>Speeding End</th> -->
                                 <th>Value</th>
-                                <th>Cost (Value)</th>
-                                <th>speedType</th>
+                                <th>Rating</th>
+                                <th>Violation Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -52,12 +55,11 @@ $(function() {
         order: [[1,'desc']],
         ajax: '{!! url("/company/speed-management/speed-data") !!}',
         columns: [
-            { data: 'speedingValue',		name: 'speedingValue', orderable: true },
-            { data: 'costValue',		name: 'costValue', orderable: true },
+            //{ data: 'speeding_start',		name: 'speeding_start', orderable: true },
+            // { data: 'speeding_end',		name: 'speeding_end', orderable: true },
+            { data: 'range',		name: 'range', orderable: true },
+            { data: 'rating',		name: 'rating', orderable: true },
             { data: 'speedType',		name: 'speedType', orderable: true },
-			// { data: 'email',	name: 'email', orderable: true },
-            // { data: 'phone',	name: 'phone',	orderable: true, "visible":true },
-            // { data: 'created_at',	name: 'created_at',	orderable: true, "visible":true },
             { data: 'action', name: 'action', orderable: false,  },
         ],
         dom: 'Blfrptip',
