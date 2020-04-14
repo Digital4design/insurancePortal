@@ -58,6 +58,9 @@ class SpeedingController extends Controller
      */
     public function store(Request $request)
     {
+        
+        
+
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'speeding_start' => 'required',
@@ -69,15 +72,31 @@ class SpeedingController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         try {
-            $speedData = DB::table('speeding')
-                ->where('speeding.company_id', Auth::user()->id)
-                ->where('speeding.speeding_start', $request->speeding_start)
-                ->where('speeding.speeding_end', $request->speeding_end)
-                ->where('speeding.rating', $request->rating)
-                ->where('speeding.speedType', $request->speedType)
-                ->get();
+
+            if($request->speeding_end){
+                $speedData =  DB::table('speeding')
+                    -> where('company_id' , Auth::user()->id)
+                    -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_end])
+                    -> where('speeding.speedType', $request->speedType)
+                    -> get();
+            }else{
+                $speedData =  DB::table('speeding')
+                -> where('company_id' , Auth::user()->id)
+                -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_start])
+                -> where('speeding.speedType', $request->speedType)
+                -> get();
+            }
+            // dd($speedData);
+
+            // $speedData = DB::table('speeding')
+            //     ->where('speeding.company_id', Auth::user()->id)
+            //     ->where('speeding.speeding_start', $request->speeding_start)
+            //     ->where('speeding.speeding_end', $request->speeding_end)
+            //     ->where('speeding.rating', $request->rating)
+            //     ->where('speeding.speedType', $request->speedType)
+            //     ->get();
             if (count($speedData) > 0) {
-                return back()->with(['status' => 'danger', 'message' => 'This record already taken Try with other']);
+                return back()->with(['status' => 'danger', 'message' => 'This '. $request->speeding_start .' and '.$request->speeding_end.' already taken Try with other']);
             } else {
                 $speedData = SpeedModel::create([
                     'company_id' => Auth::user()->id,
