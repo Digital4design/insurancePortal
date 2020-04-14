@@ -85,8 +85,8 @@
          ajax:'{{ url("/company/user-management/get-tracker-report-data") }}'+'/'+trackerId+'/'+userId+'/'+startDate+'/'+endDate,
          columns: [
             { data:'userData',name: 'userData', orderable: true },
-            { data:'harshrating',name: 'harshrating', orderable: true },
-            { data:'rating',name: 'rating', orderable: true },
+            { data:'harshrating',name: 'harshrating', orderable: true ,"visible":true },
+            { data:'speedrating',name: 'speedrating', orderable: true, "visible":true },
             { data: 'odometer',name: 'odometer',orderable: true, "visible":true },
             { data: 'mileageDa',name: 'mileageDa',orderable: true, "visible":true },
             { data: 'action',name: 'action', orderable: false,},
