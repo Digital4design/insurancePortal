@@ -33,7 +33,7 @@
 											id="speeding_start" 
 											name="speeding_start"
 											placeholder="speeding_start"
-											value="{{ old('speeding_start',(isset($speedData) && !empty($speedData->speeding_start)) ? $speedData->speeding_start : '' ) }}"
+											value="{{ old('speeding_start',(isset($speedData) && !empty( $speedData->speeding_start )) ? $speedData->speeding_start : '0' ) }}"
 										/>
                                 @error('speeding_start')
                                  <small class="form-control-feedback">{{ $errors->first('speeding_start') }}</small>

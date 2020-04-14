@@ -57,8 +57,8 @@ $(function() {
         columns: [
             //{ data: 'speeding_start',		name: 'speeding_start', orderable: true },
             // { data: 'speeding_end',		name: 'speeding_end', orderable: true },
-            { data: 'range',		name: 'range', orderable: true },
-            { data: 'rating',		name: 'rating', orderable: true },
+            { data: 'range',		name: 'range' , orderable: false,},
+            { data: 'rating',		name: 'rating', orderable: false, },
             { data: 'speedType',		name: 'speedType', orderable: true },
             { data: 'action', name: 'action', orderable: false,  },
         ],

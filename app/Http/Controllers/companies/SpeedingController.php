@@ -58,9 +58,6 @@ class SpeedingController extends Controller
      */
     public function store(Request $request)
     {
-        
-        
-
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'speeding_start' => 'required',
@@ -73,18 +70,29 @@ class SpeedingController extends Controller
         }
         try {
 
-            if($request->speeding_end){
-                $speedData =  DB::table('speeding')
-                    -> where('company_id' , Auth::user()->id)
-                    -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_end])
-                    -> where('speeding.speedType', $request->speedType)
-                    -> get();
-            }else{
+            if($request->speeding_start){
                 $speedData =  DB::table('speeding')
                 -> where('company_id' , Auth::user()->id)
                 -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_start])
                 -> where('speeding.speedType', $request->speedType)
+                -> where('speeding.rating', $request->rating)
                 -> get();
+                
+            }else{
+                $speedData =  DB::table('speeding')
+                -> where('company_id' , Auth::user()->id)
+                -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_end])
+                -> where('speeding.speedType', $request->speedType)
+                -> where('speeding.rating', $request->rating)
+                -> get();
+            }
+            if($request->rating){
+                $ratingData =  DB::table('speeding')
+                -> where('company_id' , Auth::user()->id)               
+                -> where('speeding.speedType', $request->speedType)
+                -> where('speeding.rating', $request->rating)
+                -> get();
+                
             }
             // dd($speedData);
 
@@ -97,7 +105,10 @@ class SpeedingController extends Controller
             //     ->get();
             if (count($speedData) > 0) {
                 return back()->with(['status' => 'danger', 'message' => 'This '. $request->speeding_start .' and '.$request->speeding_end.' already taken Try with other']);
-            } else {
+            } 
+            else if(count($ratingData) > 0){
+                return back()->with(['status' => 'danger', 'message' => 'This rating '. $request->rating .' already taken Try with other']);
+            }else {
                 $speedData = SpeedModel::create([
                     'company_id' => Auth::user()->id,
                     'speeding_start' => $request->speeding_start,
@@ -158,14 +169,50 @@ class SpeedingController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         try {
-            $speedData = SpeedModel::find(\Crypt::decrypt($id));
-            $updateData = array(
-                "speeding_start" => $request->has('speeding_start') ? $request->speeding_start : "",
-                "speeding_end" => $request->has('speeding_end') ? $request->speeding_end : "",
-                "rating" => $request->has('rating') ? $request->rating : "",
-                "speedType" => $request->has('speedType') ? $request->speedType : "",
-            );
-            $speedData->update($updateData);
+            if($request->speeding_start){
+                $speedData =  DB::table('speeding')
+                -> where('company_id' , Auth::user()->id)
+                -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_start])
+                -> where('speeding.speedType', $request->speedType)
+                -> where('id','!=',\Crypt::decrypt($id))
+                // -> where('speeding.rating', $request->rating)
+                -> get();
+                
+            }else{
+                $speedData =  DB::table('speeding')
+                -> where('company_id' , Auth::user()->id)
+                -> whereRaw('? between speeding_start and speeding_end', [$request->speeding_end])
+                -> where('speeding.speedType', $request->speedType)
+                -> where('id','!=',\Crypt::decrypt($id))
+               // -> whereRaw('? between rating', [$request->rating])
+                -> get();
+            }
+
+            if($request->rating){
+                $ratingData =  DB::table('speeding')
+                -> where('company_id' , Auth::user()->id)               
+                -> where('speeding.speedType', $request->speedType)
+                -> where('id','!=',\Crypt::decrypt($id))
+                -> where('speeding.rating', $request->rating)
+                -> get();
+                
+            }
+            if (count($speedData) > 0) {
+                return back()->with(['status' => 'danger', 'message' => 'This '. $request->speeding_start .' and '.$request->speeding_end.' already taken Try with other']);
+            }
+            else if(count($ratingData) > 0){
+                return back()->with(['status' => 'danger', 'message' => 'This rating '. $request->rating .' already taken Try with other']);
+            }
+             else {
+                $speedData = SpeedModel::find(\Crypt::decrypt($id));
+                $updateData = array(
+                    "speeding_start" => $request->has('speeding_start') ? $request->speeding_start : "",
+                    "speeding_end" => $request->has('speeding_end') ? $request->speeding_end : "",
+                    "rating" => $request->has('rating') ? $request->rating : "",
+                    "speedType" => $request->has('speedType') ? $request->speedType : "",
+                );
+                $speedData->update($updateData);
+        }
             return redirect('/company/speed-management')->with(array('status' => 'success', 'message' => 'Update record successfully.'));
         } catch (\exception $e) {
             return back()->with(array('status' => 'danger', 'message' => $e->getMessage()));
