@@ -6,9 +6,9 @@
 		<div class="navbar-header">
 			<a class="navbar-brand" href="{{ url('/company') }}">
 				<b>
-					<!-- Dark Logo icon -->
+					<!-- Dark Logo icon >
 					<img src="{{ asset('public/assets/admin/images/logo-icon.png') }}" alt="homepage" class="dark-logo" />
-					<!-- Light Logo icon -->
+					 Light Logo icon -->
 					<img src="{{ asset('public/assets/admin/images/logo-light-text.png') }}" alt="homepage" class="light-logo" style="width: 190px;" />
 				</b>
 				<!--End Logo icon -->

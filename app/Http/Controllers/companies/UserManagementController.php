@@ -588,14 +588,14 @@ class UserManagementController extends Controller
             }
             // dd($result);
             return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
-                return '<a href="http://maps.google.com/?q=' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
-                return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
+                return '<a href="http://maps.google.com/?q=' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map ('.$location.')</a>';
+                return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map ('.$location.')</a>';
             })->make(true);
         } else {
             $result = array();
             $location = '';
             return Datatables::of($result)->addColumn('action', function ($result) use ($location) {
-                return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map</a>';
+                return '<a href="https://www.google.com/maps/dir//' . $location . '" target="_blank"><i class="mdi mdi-map-marker"></i> Map('.$location.')</a>';
             })->make(true);
         }
    
