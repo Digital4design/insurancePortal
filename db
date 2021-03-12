@@ -27,7 +27,7 @@ MAIL_DRIVER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=manish@gmail.com
-MAIL_PASSWORD=rgzltslovxaxkfty
+MAIL_PASSWORD={}
 mail_from_address=info@gg.com
 MAIL_FROM_NAME='Insurance Portal'
 
